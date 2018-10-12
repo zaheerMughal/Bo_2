@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2e313d</color>
+    <color name="colorPrimaryDark">#242730</color>
+    <color name="colorAccent">#245455</color>
+    <color name="windowBackground">#efefef</color>
+    <color name="textColorPrimary">#ffffff</color>
+    <color name="textBoxTextColor">#242730</color>
+    <color name="goalOverviewDetailTextColor">#242730</color>
+    <color name="empty_list_text_color">#808080</color>
+    <color name="headingColor">#afafaf</color>
+    <color name="bottom_bar_background_color">#245455</color>
+    <color name="buttonText">#FFF</color>
+    <color name="addMoneyTextColor">#1f89fe</color>
+    <color name="withdrawMoneyTextColor">#fe1f26</color>
+    <color name="logoBackgroundColor">#245355</color>
+
+
+    <color name="currencies_item_pressed">#b4b4b4</color>
+    <color name="currencies_item_normal">#efefef</color>
+    <color name="search_toolbar_hint_color">#727272</color>
+
+</resources>

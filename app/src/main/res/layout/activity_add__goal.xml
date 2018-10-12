@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Add_Goal">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar" />
+
+    <!-- Toolbar Elements -->
+    <ImageButton
+        android:id="@+id/ic_done"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:background="@drawable/ripple_effect"
+        android:contentDescription="@string/save_goal"
+        android:src="@drawable/ic_done"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="@+id/include"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/toolbar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_goal"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/toolbar_text_size"
+        app:fontFamily="@font/sfui_display_medium"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ic_close"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:background="@drawable/ripple_effect"
+        android:contentDescription="@string/close_window"
+        android:src="@drawable/ic_close"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- Content-->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="@dimen/content_width"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/toolbar_height"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/key_line_16dp"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/key_line_16dp">
+
+
+            <FrameLayout
+                android:layout_width="@dimen/add_goal_image_width_height"
+                android:layout_height="@dimen/add_goal_image_width_height"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/key_line_16dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/goalImageIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_goal_image"
+                    android:layout_gravity="center"/>
+
+                <ProgressBar
+                    android:id="@+id/imageLoadingProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_8dp"
+                android:layout_marginLeft="@dimen/key_line_16dp"
+                android:layout_marginStart="@dimen/key_line_16dp"
+                android:layout_marginTop="@dimen/key_line_16dp"
+                android:text="@string/title_of_goal"
+                android:textSize="@dimen/heading_text_size"
+                app:fontFamily="@font/sfui_display_light" />
+
+
+            <EditText
+                android:id="@+id/goalTitleET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:hint="@string/enter_title_of_goal"
+                android:inputType="textPersonName"
+                android:maxLength="40"
+                android:padding="@dimen/key_line_16dp"
+                android:textColor="@color/textBoxTextColor"
+                android:textSize="@dimen/edit_text_box_text_size" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_8dp"
+                android:layout_marginLeft="@dimen/key_line_16dp"
+                android:layout_marginStart="@dimen/key_line_16dp"
+                android:layout_marginTop="@dimen/key_line_16dp"
+                android:text="@string/goal_info"
+                android:textSize="@dimen/heading_text_size"
+                app:fontFamily="@font/sfui_display_light" />
+
+            <LinearLayout
+                android:id="@+id/amountContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/goal_amount"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <EditText
+                    android:id="@+id/targetAmountET"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:gravity="end"
+                    android:hint="@string/enter_amount"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    android:padding="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/targetDateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/target_date"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/targetDateTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium"
+                    tools:text="23, jun, 2018" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/goalCurrencyContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/goal_currency"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/goalCurrencyTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium"
+                    tools:text="USD" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/savingFrequencyContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/saving_frequency"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/savingFrequencyTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:text="@string/not_planned"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_8dp"
+                android:layout_marginLeft="@dimen/key_line_16dp"
+                android:layout_marginStart="@dimen/key_line_16dp"
+                android:layout_marginTop="@dimen/key_line_16dp"
+                android:text="@string/reminder"
+                app:fontFamily="@font/sfui_display_light" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/set_reminder"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/reminderToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/key_line_16dp"
+                    android:layout_marginRight="@dimen/key_line_16dp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/reminderTimeContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/reminder_time"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/reminderTimeTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium"
+                    tools:text="10:30 am" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reminderDayContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/reminder_day"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/reminderDayTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium"
+                    tools:text="Friday" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reminderDateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:padding="@dimen/key_line_16dp"
+                    android:text="@string/date"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_light" />
+
+                <TextView
+                    android:id="@+id/reminderDateTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableEnd="@drawable/ic_next"
+                    android:drawableRight="@drawable/ic_next"
+                    android:gravity="end"
+                    android:paddingBottom="@dimen/key_line_16dp"
+                    android:paddingTop="@dimen/key_line_16dp"
+                    android:textColor="@color/textBoxTextColor"
+                    android:textSize="@dimen/edit_text_box_text_size"
+                    app:fontFamily="@font/sfui_display_medium"
+                    tools:text="1" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>

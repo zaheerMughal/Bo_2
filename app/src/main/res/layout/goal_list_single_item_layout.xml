@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/content_width"
+    android:layout_gravity="center|top"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/key_line_8dp">
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/key_line_16dp">
+
+
+        <ImageButton
+            android:id="@+id/ic_menu"
+            android:layout_width="@dimen/toolbar_button_width_height"
+            android:layout_height="@dimen/toolbar_button_width_height"
+            android:background="@drawable/ripple_effect"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/ic_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/ic_delete"
+            android:layout_width="@dimen/toolbar_button_width_height"
+            android:layout_height="@dimen/toolbar_button_width_height"
+            android:background="@drawable/ripple_effect"
+            android:contentDescription="@string/delete_toolbar_icon"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/ic_deposit_money"
+            android:layout_width="@dimen/toolbar_button_width_height"
+            android:layout_height="@dimen/toolbar_button_width_height"
+            android:background="@drawable/ripple_effect"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/ic_deposit_black"
+            app:layout_constraintBottom_toBottomOf="@+id/ic_menu"
+            app:layout_constraintEnd_toStartOf="@+id/ic_menu"
+            app:layout_constraintTop_toTopOf="@+id/ic_menu"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <LinearLayout
+            android:id="@+id/image_and_progressbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:padding="@dimen/key_line_8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ic_deposit_money">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/goalImageIV"
+                android:layout_width="@dimen/goal_overview_image_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/default_goal_image" />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+
+
+                <TextView
+                    android:id="@+id/titleTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:maxLines="2"
+                    android:paddingEnd="@dimen/key_line_8dp"
+                    android:paddingLeft="@dimen/key_line_8dp"
+                    android:paddingStart="@dimen/key_line_8dp"
+                    android:textColor="@color/goalOverviewDetailTextColor"
+                    android:textSize="@dimen/goal_title_single_list_item"
+                    app:fontFamily="@font/sfui_display_medium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Goal title" />
+
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/progress_bar_height_goal_overview"
+                    android:layout_margin="@dimen/key_line_8dp"
+                    tools:progress="34"
+                    android:progressDrawable="@drawable/progress_bar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titleTV" />
+
+
+                <TextView
+                    android:id="@+id/percentage_DepositedAmount_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/key_line_8dp"
+                    android:maxLines="1"
+                    android:padding="@dimen/key_line_8dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/percentage_text_size_goal_overview"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/sfui_display_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/progressBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/progressBar"
+                    tools:text="34% (123,456,789,012,345)" />
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/targetDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/key_line_8dp"
+            android:layout_marginStart="@dimen/key_line_8dp"
+            android:layout_marginTop="@dimen/key_line_16dp"
+            android:text="@string/target_amount"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_light"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_and_progressbar_container" />
+
+        <TextView
+            android:id="@+id/targetDateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/key_line_8dp"
+            android:layout_marginRight="@dimen/key_line_8dp"
+            android:maxLines="1"
+            android:textColor="@color/goalOverviewDetailTextColor"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_medium"
+            app:layout_constraintBottom_toBottomOf="@+id/targetDate"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/targetDate"
+            tools:text="123,456,789,012,345" />
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_marginEnd="@dimen/key_line_16dp"
+            android:layout_marginLeft="@dimen/key_line_16dp"
+            android:layout_marginRight="@dimen/key_line_16dp"
+            android:layout_marginStart="@dimen/key_line_16dp"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:background="@color/empty_list_text_color"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/targetDate" />
+
+
+
+        <TextView
+            android:id="@+id/remainingAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:text="@string/remaining_amount"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_light"
+            app:layout_constraintLeft_toLeftOf="@id/targetDate"
+            app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+        <TextView
+            android:id="@+id/remainingAmountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/key_line_8dp"
+            android:layout_marginRight="@dimen/key_line_8dp"
+            android:textColor="@color/goalOverviewDetailTextColor"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_medium"
+            app:layout_constraintBottom_toBottomOf="@id/remainingAmount"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/remainingAmount"
+            tools:text="123,456,789,012,345" />
+
+        <View
+            android:id="@+id/remainingDaysBar"
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_marginEnd="@dimen/key_line_16dp"
+            android:layout_marginLeft="@dimen/key_line_16dp"
+            android:layout_marginRight="@dimen/key_line_16dp"
+            android:layout_marginStart="@dimen/key_line_16dp"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:background="@color/empty_list_text_color"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/remainingAmount" />
+
+
+        <TextView
+            android:id="@+id/remainingDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/key_line_8dp"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:text="@string/remaining_days"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_light"
+            app:layout_constraintBottom_toBottomOf="@+id/remainingDaysTV"
+            app:layout_constraintStart_toStartOf="@+id/remainingAmount"
+            app:layout_constraintTop_toTopOf="@+id/remainingDaysTV" />
+
+        <TextView
+            android:id="@+id/remainingDaysTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/key_line_8dp"
+            android:layout_marginTop="@dimen/key_line_8dp"
+            android:gravity="end"
+            android:maxEms="8"
+            android:textAlignment="textEnd"
+            android:textColor="@color/goalOverviewDetailTextColor"
+            android:textSize="@dimen/goal_overview_detail_text_size"
+            app:fontFamily="@font/sfui_display_medium"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/remainingDaysBar"
+            tools:text="1 month,88 days "
+            android:layout_marginEnd="@dimen/key_line_8dp" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

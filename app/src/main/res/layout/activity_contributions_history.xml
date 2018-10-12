@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ContributionsHistory">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar" />
+
+    <!-- Toolbar Elements -->
+    <TextView
+        android:id="@+id/toolbar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/contributions"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/toolbar_text_size"
+        app:fontFamily="@font/sfui_display_medium"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ic_back_arrow"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:background="@drawable/ripple_effect"
+        android:contentDescription="@string/close_window"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/contributionsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/toolbar_height"
+        android:paddingBottom="@dimen/toolbar_height"
+        android:clipToPadding="false"/>
+
+
+    <TextView
+        android:id="@+id/emptyContributionHistoryTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/empty_contribution_history_icon"
+        app:fontFamily="@font/sfui_display_light"
+        android:text="@string/you_don_t_have_any_contribution"
+        android:textColor="@color/empty_list_text_color"
+        android:textSize="@dimen/empty_list_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/contributions_list_bottom_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/contributions_list_bottom_add"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

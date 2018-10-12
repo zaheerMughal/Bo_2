@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DepositMoney">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar" />
+    <!-- Toolbar Elements -->
+
+    <TextView
+        android:id="@+id/toolbar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_money"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/toolbar_text_size"
+        app:fontFamily="@font/sfui_display_medium"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ic_back_arrow"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:src="@drawable/ic_arrow_back"
+        android:background="@drawable/ripple_effect"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/close_window"/>
+
+    <LinearLayout
+        android:id="@+id/amountContainer"
+        android:layout_width="@dimen/content_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lines="1"
+            android:padding="@dimen/key_line_16dp"
+            android:text="@string/amount"
+            android:textSize="@dimen/edit_text_box_text_size"
+            app:fontFamily="@font/sfui_display_light" />
+
+        <EditText
+            android:id="@+id/amountET"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="end"
+            android:hint="@string/enter_amount"
+            android:inputType="numberDecimal|numberSigned"
+            android:maxLength="20"
+            android:padding="@dimen/key_line_16dp"
+            android:textColor="@color/textBoxTextColor"
+            android:textSize="@dimen/edit_text_box_text_size"
+            app:fontFamily="@font/sfui_display_medium" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/key_line_8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/key_line_8dp"
+        android:text="@string/negative_amount_will_decrease_savings"
+        android:textColor="@color/headingColor"
+        app:fontFamily="@font/sfui_display_light"
+        app:layout_constraintBottom_toTopOf="@+id/addMoneyBtn"
+        app:layout_constraintStart_toStartOf="@+id/amountContainer"
+        app:layout_constraintTop_toBottomOf="@+id/amountContainer"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/addMoneyBtn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/deposit"
+        android:textAllCaps="false"
+        android:textSize="@dimen/deposit_button_text_size"
+        app:fontFamily="@font/sfui_display_medium"
+        app:layout_constraintEnd_toEndOf="@+id/amountContainer"
+        app:layout_constraintStart_toStartOf="@+id/amountContainer"
+        app:layout_constraintTop_toBottomOf="@+id/amountContainer" />
+
+</android.support.constraint.ConstraintLayout>
