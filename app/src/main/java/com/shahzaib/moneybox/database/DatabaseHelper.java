@@ -80,16 +80,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
         }
 
-
-
-//        final String DROP_GOALS_TABLE = "DROP TABLE IF EXISTS "+ DbContract.GOALS.TABLE_NAME;
-//        final String DROP_REQUEST_CODES_TABLE = "DROP TABLE IF EXISTS "+ DbContract.NOTIFICATION_IDs.TABLE_NAME;
-//        final String DROP_CONTRIBUTIONS_HISTORY_TABLE = "DROP TABLE IF EXISTS "+ DbContract.CONTRIBUTION_HISTORY.TABLE_NAME;
-//
-//        db.execSQL(DROP_GOALS_TABLE);
-//        db.execSQL(DROP_REQUEST_CODES_TABLE);
-//        db.execSQL(DROP_CONTRIBUTIONS_HISTORY_TABLE);
-//        onCreate(db);
     }
 
 

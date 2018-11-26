@@ -17,8 +17,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     public static final String INTENT_KEY_IS_ITEM_ADDED = "isItemAdded";
     public static  String ADD_MOB_APP_ID;
 
+    public static  String INTERSTITIAL_AD_UNIT_ID;
+
 
     ImageButton  ic_add_goal,ic_completed_goals;
     Button addGoalBtn;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     TextView emptyGoalListTV;
     int totalNumberOfGoals=0;
     AdView main_list_bottom_ad;
+    private InterstitialAd interstitialAd;
 
 
 
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ADD_MOB_APP_ID = getString(R.string.admob_app_id);
-
+        INTERSTITIAL_AD_UNIT_ID = getString(R.string.goal_overview_interstitial);
 
 
         ic_add_goal = findViewById(R.id.ic_add_goal);
@@ -58,9 +63,11 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         goalRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GoalsAdapter(this);
         MobileAds.initialize(this, ADD_MOB_APP_ID);
-
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(INTERSTITIAL_AD_UNIT_ID);
 
         getLoaderManager().initLoader(GOALS_LIST_LOADER,null,this);
+        requestInterstitialAd(interstitialAd);
 
 
 
@@ -111,7 +118,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
                 if(data == null) return;
                 if(data.getBooleanExtra(INTENT_KEY_IS_ITEM_ADDED,false))
                 {
-                    scrollToPosition(totalNumberOfGoals);
+//                    scrollToPosition(totalNumberOfGoals);
                 }
                 break;
         }
@@ -189,7 +196,18 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
-
+    private void requestInterstitialAd(final InterstitialAd interstitialAd) {
+//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        interstitialAd.loadAd(adRequest);
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                interstitialAd.show();
+            }
+        });
+    }
 
 
 }
