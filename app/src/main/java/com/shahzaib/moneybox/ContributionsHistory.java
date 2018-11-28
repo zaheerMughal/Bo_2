@@ -74,8 +74,8 @@ public class ContributionsHistory extends AppCompatActivity  implements LoaderMa
     }
 
     private void requestAndLoadBannerAd(AdView bannerAdView) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
+//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
 

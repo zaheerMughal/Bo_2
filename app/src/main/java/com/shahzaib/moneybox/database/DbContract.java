@@ -33,7 +33,6 @@ public class DbContract {
         public static final String COLUMN_SAVING_FREQUENCY = "SavingFrequency";
         public static final String COLUMN_REMINDER = "Reminder";
         public static final String COLUMN_IS_COMPLETED = "isCompleted";
-        // Todo: follwoing three column are added in new version
         public static final String COLUMN_CURRENCY_COUNTERY = "CurrencyCountry";
         public static final String COLUMN_CURRENCY_CODE = "CurrencyCode";
         public static final String COLUMN_CURRENCY_SYMBOL = "CurrencySymbol";

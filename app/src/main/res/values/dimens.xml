@@ -86,6 +86,8 @@
     <dimen name="goals_total_title">30sp</dimen>
     <dimen name="content_width">@dimen/match_parent</dimen>
     <dimen name="search_view_padding_search_toolbar">65dp</dimen>
+    <dimen name="goals_total_progress_bar_height_goal_overview">35dp</dimen>
+    <dimen name="about_app_text_size">18sp</dimen>
 
 
     <item name="match_parent"

@@ -60,5 +60,9 @@
     <string name="settings">Settings</string>
     <string name="default_currency">Default Currency</string>
     <string name="show_goals_total">Show Goals Total</string>
-    <string name="rate_this_app">Rate this app</string>
+    <string name="rate_this_app">Rate this app ♥️</string>
+    <string name="total">TOTAL</string>
+    <string name="about">About</string>
+    <string name="about_app">This app enable you to keep track of your savings, so you can complete them easily.
+        \n\nMoney Box is the tool that manage your savings. It will keep you on track to bring your purchase goals to life. It takes away the frustration of saving money for a specific goal. It gives you the power and confidence to succeed every time, and that’s just plan smart!</string>
 </resources>

@@ -26,7 +26,7 @@ public class Settings extends AppCompatActivity implements CompoundButton.OnChec
 
 
     ImageButton ic_close;
-    LinearLayout goalCurrencyContainer,rateThisAppContainer, goalsTotalContainer;
+    LinearLayout goalCurrencyContainer,rateThisAppContainer, goalsTotalContainer,aboutContainer;
     TextView goalCurrencyTV;
     SwitchCompat goalsTotalToggle;
 
@@ -41,6 +41,7 @@ public class Settings extends AppCompatActivity implements CompoundButton.OnChec
         goalsTotalContainer = findViewById(R.id.goalsTotalContainer);
         goalCurrencyTV = findViewById(R.id.goalCurrencyTV);
         goalsTotalToggle = findViewById(R.id.goalsTotalToggle);
+        aboutContainer = findViewById(R.id.aboutContainer);
 
 
 
@@ -93,7 +94,12 @@ public class Settings extends AppCompatActivity implements CompoundButton.OnChec
             }
         });
 
-
+        aboutContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Settings.this,About.class));
+            }
+        });
 
 
         goalsTotalToggle.setOnCheckedChangeListener(this);

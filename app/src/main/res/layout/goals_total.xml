@@ -48,7 +48,7 @@
                     app:fontFamily="@font/sfui_display_medium"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="TOTAL"
+                    android:text="@string/total"
                     android:gravity="center"/>
 
 
@@ -56,7 +56,7 @@
                     android:id="@+id/progressBar"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/progress_bar_height_goal_overview"
+                    android:layout_height="@dimen/goals_total_progress_bar_height_goal_overview"
                     android:layout_margin="@dimen/key_line_8dp"
                     tools:progress="34"
                     android:progressDrawable="@drawable/goals_total_progress_bar"
@@ -66,7 +66,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/goalsTotalTitleTV" />
 
 
-                <!--TODO: Left to Right text direction fix-->
                 <TextView
                     android:id="@+id/percentage_DepositedAmount_TV"
                     android:layout_width="match_parent"

@@ -47,7 +47,6 @@ public class CompletedGoals extends AppCompatActivity  implements LoaderManager.
         completedGoalsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GoalsAdapter(this);
 
-
         getLoaderManager().initLoader(COMPLETED_GOALS_LIST_LOADER,null,this);
         ic_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,8 +64,8 @@ public class CompletedGoals extends AppCompatActivity  implements LoaderManager.
     }
 
     private void requestAndLoadBannerAd(AdView bannerAdView) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
+//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
 

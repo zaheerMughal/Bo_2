@@ -7,11 +7,11 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
-    public static final String DATABASE_NAME = "Glla.db";
-    public static final int DATABASE_VERSION = 3;
+    private static final String DATABASE_NAME = "Glla.db";
+    private static final int DATABASE_VERSION = 3;
 
 
-    public DatabaseHelper(Context context) {
+    DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

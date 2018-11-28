@@ -161,7 +161,6 @@ public class Add_Goal extends AppCompatActivity implements View.OnClickListener,
 
                     refreshCurrencyData();
                     alarmid = cursor.getInt(cursor.getColumnIndex(DbContract.GOALS.COLUMN_ALARM_ID));
-                    //TODO: grab the currency data from database and populate TV
 
                     //******* bind the UI & also initialize the variables
                     if (goal.getPicture() != null) {

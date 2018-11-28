@@ -18,7 +18,7 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrenciesAdapter.Vi
     private ArrayList<Currency> currenciesList;
     private int row_index = -1;
     private OnCurrencyClickListener currencyClickListener;
-    Context context;
+    private Context context;
 
 
 
@@ -46,10 +46,10 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrenciesAdapter.Vi
         final Currency currentCurrency = currenciesList.get(position);
         if(currentCurrency.getSymbol().length()!=0)
         {
-            holder.countryNameAndCode.setText(currentCurrency.getCountry()+" ("+currentCurrency.getCode()+")");
+            holder.countryNameAndCode.setText(String.valueOf(currentCurrency.getCountry()+" ("+currentCurrency.getCode()+")"));
         }else
         {
-            holder.countryNameAndCode.setText("NONE");
+            holder.countryNameAndCode.setText(String.valueOf("NONE"));
         }
 
         holder.symbol.setText(currentCurrency.getSymbol());
@@ -117,7 +117,7 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrenciesAdapter.Vi
     class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView countryNameAndCode, symbol;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             countryNameAndCode = itemView.findViewById(R.id.country_name_and_code);
             symbol = itemView.findViewById(R.id.symbol);

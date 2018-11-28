@@ -44,11 +44,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     private Cursor cursor;
     private Context context;
     private int alarmID;
-    String itemID;
-    private boolean showGoalsTotal = true;
-    int totalItemCount = 0;
-    int currentItemPosition = 1;
-    ViewGroup parentViewGroup;
+    private String itemID;
+    private boolean showGoalsTotal = false;
+    private int totalItemCount = 0;
+
 
 
     public GoalsAdapter(Context context) {
@@ -60,7 +59,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        parentViewGroup = parent;
         View view;
 
         if(viewType == FOOTER_VIEW)
@@ -80,12 +78,12 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        return (position == totalItemCount-1 && showGoalsTotal) ? FOOTER_VIEW : VIEW_TYPE_CELL;
+        return (position == totalItemCount-1 && showGoalsTotal ) ? FOOTER_VIEW : VIEW_TYPE_CELL;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        currentItemPosition = position + 1;
+        int currentItemPosition = position + 1;
 //        Log.i("xxXxx", "current item position: " + currentItemPosition);
 //        Log.i("xxXxx", "Total Item count : " + totalItemCount);
 
@@ -206,8 +204,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
                     // delete the item
 //                deleteReminder(itemID,alarmID); // reminder will not exist because, when item is completed they reminder is destroyed
-                    int itemDeleted = context.getContentResolver().delete(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null);
-                    Toast.makeText(context, "Goal Deleted", Toast.LENGTH_SHORT).show();
+                    context.getContentResolver().delete(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null);
+
                 }
             });
 
@@ -220,7 +218,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         if (cursor != null) totalItemCount = cursor.getCount();
-        if (showGoalsTotal) totalItemCount++;
+        if (showGoalsTotal && totalItemCount!=0) totalItemCount++;
         return totalItemCount;
     }
 
@@ -289,7 +287,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
         context.getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
         SHOW_LOG("Reminder Deleted from the database ");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(alarmPendingIntent);
+        if(alarmManager != null) alarmManager.cancel(alarmPendingIntent);
+
         SHOW_LOG("Alarm Also Canceled");
 
     }
@@ -336,8 +335,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
         this.showGoalsTotal = showGoalsTotal;
         notifyDataSetChanged();
     }
-
-
 
 
 

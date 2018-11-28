@@ -15,8 +15,8 @@ import com.shahzaib.moneybox.R;
 
 public class ContributionHistoryAdapter extends RecyclerView.Adapter<ContributionHistoryAdapter.ViewHolder> {
 
-    Context context;
-    Cursor cursor;
+    private Context context;
+    private Cursor cursor;
 
 
     public ContributionHistoryAdapter(Context context)
@@ -41,7 +41,7 @@ public class ContributionHistoryAdapter extends RecyclerView.Adapter<Contributio
         double amount = cursor.getDouble(cursor.getColumnIndex(DbContract.CONTRIBUTION_HISTORY.COLUMN_AMOUNT));
         if(amount>0)
         {
-            holder.amountTV.setText("+"+Goal.separateNumberWithComma(amount));
+            holder.amountTV.setText(String.valueOf("+"+Goal.separateNumberWithComma(amount)));
             holder.amountTV.setTextColor(context.getResources().getColor(R.color.addMoneyTextColor));
         }
         else
@@ -71,9 +71,9 @@ public class ContributionHistoryAdapter extends RecyclerView.Adapter<Contributio
 
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    class ViewHolder extends RecyclerView.ViewHolder
     { TextView dateTV, amountTV;
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             dateTV = itemView.findViewById(R.id.dateTV);
             amountTV = itemView.findViewById(R.id.amountTV);
