@@ -65,7 +65,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".CurrenciesList"></activity>
+        <activity android:name=".CurrenciesList" />
+        <activity android:name=".Settings"></activity>
     </application>
 
 </manifest>

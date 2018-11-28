@@ -25,6 +25,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
+import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
 
 public class MainActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         ic_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Setting Button clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,Settings.class));
             }
         });
     }
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     protected void onResume() {
         super.onResume();
         requestAndLoadBannerAd(main_list_bottom_ad);
+        adapter.setShowGoalsTotal(SharedPreferencesUtils.getDefault_ShowGoalsTotal(this));
 
     }
 

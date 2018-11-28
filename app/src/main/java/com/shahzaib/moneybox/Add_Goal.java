@@ -320,7 +320,7 @@ public class Add_Goal extends AppCompatActivity implements View.OnClickListener,
                 goal.setGoalCurrency(selectedCurrency);
                 SHOW_LOG("Selected Currency: "+selectedCurrency.toString());
                 // change the default currency, also bind data to view and store in variable that will be saved in db
-                SharedPreferencesUtils.setDefaultCurrency(this,selectedCurrency);
+//                SharedPreferencesUtils.setDefaultCurrency(this,selectedCurrency);
                 refreshCurrencyData();
 
             }

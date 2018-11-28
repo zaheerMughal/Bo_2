@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_settings" />
-                            <entry key="sourceFile" value="C:\Users\Shahzaib" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_heart" />
+                            <entry key="sourceFile" value="C:\Users\Shahzaib\Desktop\heart.svg" />
                           </map>
                         </option>
                       </PersistentState>

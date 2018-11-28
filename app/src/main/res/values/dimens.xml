@@ -13,6 +13,7 @@
     <!--<dimen name="sw_600dp_heading_text_size">20sp</dimen>-->
     <!--<dimen name="sw_800dp_heading_text_size">25sp</dimen>-->
     <dimen name="edit_text_box_text_size">16sp</dimen>
+    <dimen name="settings_edit_text_box_text_size">24sp</dimen>
     <dimen name="goal_overview_detail_text_size">16sp</dimen>
     <!--<dimen name="sw_360dp_goal_overview_text_size">18sp</dimen>-->
     <!--<dimen name="sw_400dp_goal_overview_text_size">20sp</dimen>-->

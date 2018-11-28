@@ -15,7 +15,6 @@
     <string name="close_window">Close Window</string>
     <string name="save_goal">Save Goal</string>
     <string name="goals">Goals</string>
-    <string name="settings">Settings</string>
     <string name="completed_goals">Completed Goals</string>
     <string name="remaining_days">Remaining Days</string>
     <string name="target_amount">Target Amount</string>
@@ -48,8 +47,6 @@
     <string name="goal_currency">Goal Currency</string>
 
 
-
-
     <!--Ads-->
     <string name="main_list_bottom_add">ca-app-pub-6298670741113425/1643322496</string>
     <string name="completed_goals_list_bottom_add">ca-app-pub-6298670741113425/5265613555</string>
@@ -60,4 +57,8 @@
     <string name="total_amount">Total Amount</string>
     <string name="total_deposited">Deposited</string>
     <string name="total_remaining">Remaining</string>
+    <string name="settings">Settings</string>
+    <string name="default_currency">Default Currency</string>
+    <string name="show_goals_total">Show Goals Total</string>
+    <string name="rate_this_app">Rate this app</string>
 </resources>

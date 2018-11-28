@@ -45,7 +45,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     private Context context;
     private int alarmID;
     String itemID;
-    boolean shouldShowGoalsTotal = true;
+    private boolean showGoalsTotal = true;
     int totalItemCount = 0;
     int currentItemPosition = 1;
     ViewGroup parentViewGroup;
@@ -80,7 +80,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        return (position == totalItemCount-1 && shouldShowGoalsTotal) ? FOOTER_VIEW : VIEW_TYPE_CELL;
+        return (position == totalItemCount-1 && showGoalsTotal) ? FOOTER_VIEW : VIEW_TYPE_CELL;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 //        Log.i("xxXxx", "current item position: " + currentItemPosition);
 //        Log.i("xxXxx", "Total Item count : " + totalItemCount);
 
-        if (currentItemPosition == totalItemCount && shouldShowGoalsTotal) {
+        if (currentItemPosition == totalItemCount && showGoalsTotal) {
 //            Log.i("xxXxx", "bind goalsTotal only");
 
             Goal totalOfGoals = new Goal(context);
@@ -220,7 +220,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         if (cursor != null) totalItemCount = cursor.getCount();
-        if (shouldShowGoalsTotal) totalItemCount++;
+        if (showGoalsTotal) totalItemCount++;
         return totalItemCount;
     }
 
@@ -329,6 +329,29 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
 
     }
+
+
+    public void setShowGoalsTotal(boolean showGoalsTotal)
+    {
+        this.showGoalsTotal = showGoalsTotal;
+        notifyDataSetChanged();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
