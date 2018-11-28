@@ -66,7 +66,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/goalsTotalTitleTV" />
 
 
-                <!--TODO: Left to Right text direction fix-->
                 <TextView
                     android:id="@+id/percentage_DepositedAmount_TV"
                     android:layout_width="match_parent"
@@ -82,7 +81,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/progressBar"
-                    tools:text="34% (123,456,789,012,345)"/>
+                    tools:text="34% (123,456,789,012,345)"
+                    android:textDirection="ltr"/>
             </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>
@@ -109,7 +109,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/key_line_8dp"
-            android:layout_marginRight="@dimen/key_line_8dp"
             android:maxLines="1"
             android:textColor="@color/goalOverviewDetailTextColor"
             android:textSize="@dimen/goal_overview_detail_text_size"
