@@ -57,4 +57,7 @@
     <string name="goal_overview_interstitial">ca-app-pub-6298670741113425/9496395776</string>
     <!--<string name="goal_overview_interstitial">ca-app-pub-3940256099942544/1033173712</string>  test ad -->
     <string name="admob_app_id">ca-app-pub-6298670741113425~2026465870</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="total_deposited">Deposited</string>
+    <string name="total_remaining">Remaining</string>
 </resources>

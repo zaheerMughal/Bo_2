@@ -48,6 +48,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--TODO: change Setting icon -->
+    <ImageButton
+        android:id="@+id/ic_settings"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:background="@drawable/ripple_effect"
+        android:contentDescription="@string/completed_goals"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintStart_toEndOf="@id/ic_completed_goals"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="fitXY"
+        android:padding="@dimen/key_line_8dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/goalsRecyclerView"

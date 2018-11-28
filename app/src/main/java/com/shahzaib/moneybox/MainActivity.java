@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     public static  String INTERSTITIAL_AD_UNIT_ID;
 
 
-    ImageButton  ic_add_goal,ic_completed_goals;
+    ImageButton  ic_add_goal,ic_completed_goals,ic_settings;
     Button addGoalBtn;
     RecyclerView goalRecyclerView;
     GoalsAdapter adapter;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         INTERSTITIAL_AD_UNIT_ID = getString(R.string.goal_overview_interstitial);
 
 
+        ic_settings = findViewById(R.id.ic_settings);
         ic_add_goal = findViewById(R.id.ic_add_goal);
         ic_completed_goals = findViewById(R.id.ic_completed_goals);
         addGoalBtn = findViewById(R.id.addGoalBtn);
@@ -86,7 +88,12 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
                 startActivity(new Intent(MainActivity.this,CompletedGoals.class));
             }
         });
-
+        ic_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Setting Button clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -197,8 +204,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         bannerAdView.loadAd(adRequest);
     }
     private void requestInterstitialAd(final InterstitialAd interstitialAd) {
-//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+//        AdRequest adRequest = new AdRequest.Builder().build();
         interstitialAd.loadAd(adRequest);
         interstitialAd.setAdListener(new AdListener() {
             @Override

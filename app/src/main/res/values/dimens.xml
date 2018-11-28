@@ -82,6 +82,7 @@
     <dimen name="bottom_bar_text_size">20sp</dimen>
     <dimen name="contribution_history_text_size">14sp</dimen>
     <dimen name="goal_title_single_list_item">25sp</dimen>
+    <dimen name="goals_total_title">30sp</dimen>
     <dimen name="content_width">@dimen/match_parent</dimen>
     <dimen name="search_view_padding_search_toolbar">65dp</dimen>
 
