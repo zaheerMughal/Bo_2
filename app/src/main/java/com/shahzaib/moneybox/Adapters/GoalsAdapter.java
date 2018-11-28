@@ -86,17 +86,29 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         currentItemPosition = position + 1;
-        Log.i("xxXxx", "current item position: " + currentItemPosition);
-        Log.i("xxXxx", "Total Item count : " + totalItemCount);
+//        Log.i("xxXxx", "current item position: " + currentItemPosition);
+//        Log.i("xxXxx", "Total Item count : " + totalItemCount);
 
         if (currentItemPosition == totalItemCount && shouldShowGoalsTotal) {
-            Log.i("xxXxx", "bind goalsTotal only");
+//            Log.i("xxXxx", "bind goalsTotal only");
 
-            holder.totalAmountTV.setText("12345");
-            holder.totalDepositedTV.setText("12345");
-            holder.totalRemainingTV.setText("12345");
-            holder.percentage_DepositedAmount_TV.setText("lorem ipsum");
-            holder.progressBar.setProgress(34);
+            Goal totalOfGoals = new Goal(context);
+            Cursor cursor = context.getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(DbContract.GOALS.GOALS_TOTAL).build(), null, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    totalOfGoals.setTargetAmount(cursor.getInt(cursor.getColumnIndex(DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_AMOUNT)));
+                    totalOfGoals.setDepositedAmount(cursor.getDouble(cursor.getColumnIndex(DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_DEPOSITED)));
+
+                    holder.totalAmountTV.setText(totalOfGoals.getTargetAmountInString());
+                    holder.totalDepositedTV.setText(totalOfGoals.getDepositedAmountInString());
+                    holder.totalRemainingTV.setText(totalOfGoals.getRemainingAmountInString());
+                    holder.percentage_DepositedAmount_TV.setText(totalOfGoals.getPercentageCompleted_With_DepositedAmount());
+                    holder.progressBar.setProgress(totalOfGoals.getPercentageCompleted());
+
+                }
+            } else {
+                Log.i("xxXxx", "Cursor is null");
+            }
 
 
         } else {

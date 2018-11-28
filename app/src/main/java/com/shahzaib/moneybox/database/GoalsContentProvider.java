@@ -17,6 +17,9 @@ public class GoalsContentProvider extends ContentProvider {
     public final int NOTIFICATION_ID_TABLE = 200;
     public final int NOTIFICATION_ID_TABLE_WITH_ID = 201;
     public final int CONTRIBUTIONS_HISTORY_TABLE = 300;
+    public final int GOALS_TOTAL = 102;
+
+
 
 
     DatabaseHelper databaseHelper;
@@ -62,6 +65,11 @@ public class GoalsContentProvider extends ContentProvider {
                         null);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
+
+            case GOALS_TOTAL:
+                cursor = db.rawQuery("SELECT SUM(TargetAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_AMOUNT+", SUM(DepositedAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_DEPOSITED+" FROM GOALS WHERE isCompleted='false';",null);
+                return cursor;
+
 
             case NOTIFICATION_ID_TABLE:
                 cursor = db.query(DbContract.NOTIFICATION_IDs.TABLE_NAME, null, selection, selectionArgs, null, null, null);
@@ -210,6 +218,8 @@ public class GoalsContentProvider extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME, GOALS);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/#", GOAL_WITH_ID);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.GOALS_TOTAL, GOALS_TOTAL);
+
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.NOTIFICATION_IDs.TABLE_NAME, NOTIFICATION_ID_TABLE);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.NOTIFICATION_IDs.TABLE_NAME + "/#", NOTIFICATION_ID_TABLE_WITH_ID);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.CONTRIBUTION_HISTORY.TABLE_NAME, CONTRIBUTIONS_HISTORY_TABLE);

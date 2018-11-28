@@ -14,6 +14,12 @@ public class DbContract {
     private DbContract(){}
 
 
+    public static class GOALS_TOTAL_TABLE
+    {
+        public static final String COLUMN_TOTAL_TARGET_AMOUNT = "TotalTargetAmount";
+        public static final String COLUMN_TOTAL_TARGET_DEPOSITED = "TotalTargetDeposited";
+    }
+
     public static class GOALS implements BaseColumns
     {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(GOALS.TABLE_NAME).build();
@@ -31,6 +37,9 @@ public class DbContract {
         public static final String COLUMN_CURRENCY_COUNTERY = "CurrencyCountry";
         public static final String COLUMN_CURRENCY_CODE = "CurrencyCode";
         public static final String COLUMN_CURRENCY_SYMBOL = "CurrencySymbol";
+
+
+        public static final String GOALS_TOTAL = "GoalsTotal";
     }
 
     public static class NOTIFICATION_IDs
