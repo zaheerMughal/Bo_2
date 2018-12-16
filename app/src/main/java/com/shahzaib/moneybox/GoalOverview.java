@@ -39,7 +39,6 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
     ProgressBar progressBar;
     ImageButton ic_deposit, ic_edit, ic_back_arrow, ic_delete,ic_goal_contribution_history;
     Toolbar goalContributionHistoryBottomBar;
-
     String itemID;
     Goal goal;
 
@@ -206,7 +205,6 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
                         handler.sendMessage(message);
                     }
                 });
-
             }
         } else {
             SHOW_LOG("Cursor is empty");
@@ -242,8 +240,8 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
     }
 
     private void requestInterstitialAd(final InterstitialAd interstitialAd) {
-//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+//        AdRequest adRequest = new AdRequest.Builder().build();
         interstitialAd.loadAd(adRequest);
         interstitialAd.setAdListener(new AdListener() {
             @Override

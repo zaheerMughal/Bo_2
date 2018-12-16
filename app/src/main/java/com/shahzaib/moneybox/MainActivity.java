@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
         getLoaderManager().initLoader(GOALS_LIST_LOADER,null,this);
 
-
-
         //*********** On click listeners
         ic_add_goal.setOnClickListener(this);
         addGoalBtn.setOnClickListener(new View.OnClickListener() {
@@ -195,8 +193,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         });
     }
     private void requestAndLoadBannerAd(AdView bannerAdView) {
-//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+//        AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
 
