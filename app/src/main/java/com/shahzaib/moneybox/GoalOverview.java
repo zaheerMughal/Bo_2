@@ -14,10 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Model.Currency;
 import com.shahzaib.moneybox.Model.Goal;
 import com.shahzaib.moneybox.ThreadPoolExecutor.ExecutorSupplier;
@@ -28,9 +24,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class GoalOverview extends AppCompatActivity implements View.OnClickListener {
 
     public static final String INTENT_KEY_ITEM_ID = "itemID";
-    private InterstitialAd interstitialAd;
-    public static  String INTERSTITIAL_AD_UNIT_ID;
-    public static  String ADD_MOB_APP_ID;
 
 
     CircleImageView goalImageIV;
@@ -47,11 +40,6 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_overview);
-
-        ADD_MOB_APP_ID = getString(R.string.admob_app_id);
-        INTERSTITIAL_AD_UNIT_ID = getString(R.string.goal_overview_interstitial);
-
-
 
 
         goal = new Goal(this);
@@ -72,13 +60,8 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
         ic_delete = findViewById(R.id.ic_delete);
         ic_goal_contribution_history = findViewById(R.id.ic_goal_contribution_history);
         goalContributionHistoryBottomBar = findViewById(R.id.goalContributionHistoryBottomBar);
-        MobileAds.initialize(this, ADD_MOB_APP_ID);
 
 
-
-
-        interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(INTERSTITIAL_AD_UNIT_ID);
 
         //*********************** On Click listeners
         ic_deposit.setOnClickListener(this);
@@ -112,7 +95,6 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-        requestInterstitialAd(interstitialAd);
 
     }
 
@@ -237,18 +219,5 @@ public class GoalOverview extends AppCompatActivity implements View.OnClickListe
 
     private void SHOW_LOG(String message) {
         Log.i("123456", message);
-    }
-
-    private void requestInterstitialAd(final InterstitialAd interstitialAd) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
-        interstitialAd.loadAd(adRequest);
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-                interstitialAd.show();
-            }
-        });
     }
 }

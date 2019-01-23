@@ -12,15 +12,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
 
 public class CompletedGoals extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>{
     public static final int COMPLETED_GOALS_LIST_LOADER = 2;
-    public static  String ADD_MOB_APP_ID;
 
 
     ImageButton ic_close;
@@ -28,7 +24,6 @@ public class CompletedGoals extends AppCompatActivity  implements LoaderManager.
     RecyclerView completedGoalsRecyclerView;
     GoalsAdapter adapter;
     TextView emptyCompletedGoals;
-    AdView completed_goals_list_bottom_ad;
 
 
 
@@ -37,13 +32,10 @@ public class CompletedGoals extends AppCompatActivity  implements LoaderManager.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_completed_goals);
-        ADD_MOB_APP_ID = getString(R.string.admob_app_id);
-        MobileAds.initialize(this, ADD_MOB_APP_ID);
 
         ic_close = findViewById(R.id.ic_close);
         completedGoalsRecyclerView = findViewById(R.id.completedGoalsRecyclerView);
         emptyCompletedGoals = findViewById(R.id.emptyCompletedGoals);
-        completed_goals_list_bottom_ad = findViewById(R.id.completed_goals_list_bottom_add);
         completedGoalsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GoalsAdapter(this);
 
@@ -60,14 +52,8 @@ public class CompletedGoals extends AppCompatActivity  implements LoaderManager.
     @Override
     protected void onResume() {
         super.onResume();
-        requestAndLoadBannerAd(completed_goals_list_bottom_ad);
     }
 
-    private void requestAndLoadBannerAd(AdView bannerAdView) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
-        bannerAdView.loadAd(adRequest);
-    }
 
 
 

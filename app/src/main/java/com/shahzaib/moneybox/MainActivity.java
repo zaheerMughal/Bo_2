@@ -15,14 +15,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.facebook.ads.*;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
 import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
@@ -32,7 +28,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     public static final int GOALS_LIST_LOADER = 1;
     public static final int REQUEST_CODE_NEW_ITEM_ADDED = 2;
     public static final String INTENT_KEY_IS_ITEM_ADDED = "isItemAdded";
-    public static  String ADD_MOB_APP_ID;
+    public static final String FB_BANNER_AD_PLACEMENT_ID = "1467991256671380_1467992480004591";
+//    public static final String FB_BANNER_AD_PLACEMENT_ID = "YOUR_PLACEMENT_ID";
 
 
 
@@ -42,7 +39,12 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     GoalsAdapter adapter;
     TextView emptyGoalListTV;
     int totalNumberOfGoals=0;
-    AdView main_list_bottom_ad;
+
+    // facebook ad
+    private AdView adView;
+
+
+
 
 
 
@@ -50,19 +52,16 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ADD_MOB_APP_ID = getString(R.string.admob_app_id);
 
 
         ic_settings = findViewById(R.id.ic_settings);
         ic_add_goal = findViewById(R.id.ic_add_goal);
         ic_completed_goals = findViewById(R.id.ic_completed_goals);
         addGoalBtn = findViewById(R.id.addGoalBtn);
-        main_list_bottom_ad = findViewById(R.id.main_list_bottom_add);
         emptyGoalListTV = findViewById(R.id.emptyGoalListTV);
         goalRecyclerView = findViewById(R.id.goalsRecyclerView);
         goalRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GoalsAdapter(this);
-        MobileAds.initialize(this, ADD_MOB_APP_ID);
 
         getLoaderManager().initLoader(GOALS_LIST_LOADER,null,this);
 
@@ -87,16 +86,38 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
                 startActivity(new Intent(MainActivity.this,Settings.class));
             }
         });
+
+
+        /************ Face book ad related
+         ***************************************/
+        adView = new AdView(this, FB_BANNER_AD_PLACEMENT_ID, AdSize.BANNER_HEIGHT_50);
+        // Find the Ad Container
+        LinearLayout adContainer = (LinearLayout) findViewById(R.id.banner_container);
+        // Add the ad view to your activity layout
+        adContainer.addView(adView);
+
+//        AdSettings.addTestDevice("a23f71e7-1375-45fb-96f8-eb506a904ae2");
+
+        // Request an ad
+        adView.loadAd();
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        requestAndLoadBannerAd(main_list_bottom_ad);
         adapter.setShowGoalsTotal(SharedPreferencesUtils.getDefault_ShowGoalsTotal(this));
 
     }
 
+    @Override
+    protected void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
 
     @Override
     public void onClick(View v) {
@@ -192,12 +213,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
         });
     }
-    private void requestAndLoadBannerAd(AdView bannerAdView) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
-        bannerAdView.loadAd(adRequest);
-    }
-
 
 
 }
