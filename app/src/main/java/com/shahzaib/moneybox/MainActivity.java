@@ -15,9 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.facebook.ads.*;
+//import com.facebook.ads.*;
 
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     public static final int GOALS_LIST_LOADER = 1;
     public static final int REQUEST_CODE_NEW_ITEM_ADDED = 2;
     public static final String INTENT_KEY_IS_ITEM_ADDED = "isItemAdded";
-    public static final String FB_BANNER_AD_PLACEMENT_ID = "1467991256671380_1467992480004591";
+//    public static final String FB_BANNER_AD_PLACEMENT_ID = "1467991256671380_1467992480004591";
 //    public static final String FB_BANNER_AD_PLACEMENT_ID = "YOUR_PLACEMENT_ID";
 
 
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     int totalNumberOfGoals=0;
 
     // facebook ad
-    private AdView adView;
+//    private AdView adView;
 
 
 
@@ -90,16 +89,16 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
         /************ Face book ad related
          ***************************************/
-        adView = new AdView(this, FB_BANNER_AD_PLACEMENT_ID, AdSize.BANNER_HEIGHT_50);
+//        adView = new AdView(this, FB_BANNER_AD_PLACEMENT_ID, AdSize.BANNER_HEIGHT_50);
         // Find the Ad Container
-        LinearLayout adContainer = (LinearLayout) findViewById(R.id.banner_container);
+//        LinearLayout adContainer = (LinearLayout) findViewById(R.id.banner_container);
         // Add the ad view to your activity layout
-        adContainer.addView(adView);
+//        adContainer.addView(adView);
 
 //        AdSettings.addTestDevice("a23f71e7-1375-45fb-96f8-eb506a904ae2");
 
-        // Request an ad
-        adView.loadAd();
+//         Request an ad
+//        adView.loadAd();
 
 
     }
@@ -113,9 +112,9 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
     @Override
     protected void onDestroy() {
-        if (adView != null) {
-            adView.destroy();
-        }
+//        if (adView != null) {
+//            adView.destroy();
+//        }
         super.onDestroy();
     }
 

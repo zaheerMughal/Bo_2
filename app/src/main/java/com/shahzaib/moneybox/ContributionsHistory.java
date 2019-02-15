@@ -13,11 +13,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
+//import com.google.android.gms.ads.AdListener;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.AdView;
+//import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.MobileAds;
 import com.shahzaib.moneybox.Adapters.ContributionHistoryAdapter;
 import com.shahzaib.moneybox.database.DbContract;
 
@@ -28,7 +28,7 @@ public class ContributionsHistory extends AppCompatActivity  implements LoaderMa
 
     ImageButton ic_arrow_back;
     TextView emptyContributionHistoryTV;
-    AdView contributionsListBottomAd;
+//    AdView contributionsListBottomAd;
 
     RecyclerView contributionsRecyclerView;
     ContributionHistoryAdapter adapter ;
@@ -39,12 +39,12 @@ public class ContributionsHistory extends AppCompatActivity  implements LoaderMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contributions_history);
         ADD_MOB_APP_ID = getString(R.string.admob_app_id);
-        MobileAds.initialize(this, ADD_MOB_APP_ID);
+//        MobileAds.initialize(this, ADD_MOB_APP_ID);
 
         ic_arrow_back = findViewById(R.id.ic_back_arrow);
         emptyContributionHistoryTV = findViewById(R.id.emptyContributionHistoryTV);
         contributionsRecyclerView = findViewById(R.id.contributionsRecyclerView);
-        contributionsListBottomAd = findViewById(R.id.contributions_list_bottom_add);
+//        contributionsListBottomAd = findViewById(R.id.contributions_list_bottom_add);
         contributionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         contributionsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         adapter = new ContributionHistoryAdapter(this);
@@ -70,14 +70,14 @@ public class ContributionsHistory extends AppCompatActivity  implements LoaderMa
     @Override
     protected void onResume() {
         super.onResume();
-        requestAndLoadBannerAd(contributionsListBottomAd);
+//        requestAndLoadBannerAd(contributionsListBottomAd);
     }
 
-    private void requestAndLoadBannerAd(AdView bannerAdView) {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
-//        AdRequest adRequest = new AdRequest.Builder().build();
-        bannerAdView.loadAd(adRequest);
-    }
+//    private void requestAndLoadBannerAd(AdView bannerAdView) {
+//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6C11C58267C4DD8B942D2272850C1298").addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+////        AdRequest adRequest = new AdRequest.Builder().build();
+//        bannerAdView.loadAd(adRequest);
+//    }
 
 
 

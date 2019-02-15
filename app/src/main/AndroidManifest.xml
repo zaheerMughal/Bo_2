@@ -12,9 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6298670741113425~2026465870" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+
+        <!--<meta-data-->
+            <!--android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+            <!--android:value="ca-app-pub-6298670741113425~2026465870" />-->
 
         <!-- Activities -->
         <activity
