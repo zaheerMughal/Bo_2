@@ -56,7 +56,8 @@ import java.util.Calendar;
 import alarm_utils.AlarmService;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Add_Goal extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener,
+public class Add_Goal extends AppCompatActivity
+        implements View.OnClickListener, DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener {
     public static final String KEY_INTENT_ITEM_ID = "itemID";
     public static final String SP_KEY_ALARM_ID = "alarmID";
@@ -131,6 +132,9 @@ public class Add_Goal extends AppCompatActivity implements View.OnClickListener,
         scrollView = findViewById(R.id.scrollView);
         toolbar_text = findViewById(R.id.toolbar_text);
         progressBar = findViewById(R.id.imageLoadingProgressBar);
+
+
+
         itemID = getIntent().getStringExtra(KEY_INTENT_ITEM_ID);
         isItemForUpdate = itemID != null;
 

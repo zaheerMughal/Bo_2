@@ -1,5 +1,6 @@
 package com.shahzaib.moneybox;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 //import com.facebook.ads.*;
 
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
 
-    ImageButton  ic_add_goal,ic_completed_goals,ic_settings;
+    ImageButton  ic_add_goal,ic_completed_goals,ic_settings,ic_sort;
     Button addGoalBtn;
     RecyclerView goalRecyclerView;
     GoalsAdapter adapter;
@@ -42,9 +44,10 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     // facebook ad
 //    private AdView adView;
 
-
-
-
+    String cursorLoaderGoalSelection = "isCompleted!=?";
+    String[] cursorLoaderGoalSelectionArgs = new String[]{"true"};
+    String cursorLoaderGoalsSortOrder = "";
+    private Uri cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI;
 
 
     @Override
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
         ic_settings = findViewById(R.id.ic_settings);
+        ic_sort = findViewById(R.id.ic_sort);
         ic_add_goal = findViewById(R.id.ic_add_goal);
         ic_completed_goals = findViewById(R.id.ic_completed_goals);
         addGoalBtn = findViewById(R.id.addGoalBtn);
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         adapter = new GoalsAdapter(this);
 
         getLoaderManager().initLoader(GOALS_LIST_LOADER,null,this);
+
 
         //*********** On click listeners
         ic_add_goal.setOnClickListener(this);
@@ -86,6 +91,23 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             }
         });
 
+        ic_sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // sort by min target Amount
+//                cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT).build();
+
+                // sort by max target Amount
+                cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT).build();
+
+
+                getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
+                Toast.makeText(MainActivity.this, "Show popup for sort", Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        
 
         /************ Face book ad related
          ***************************************/
@@ -165,9 +187,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         switch (id)
         {
             case GOALS_LIST_LOADER:
-                String goalSelection = "isCompleted!=?";
-                String[] goalSelectionArgs = new String[]{"true"};
-                return new CursorLoader(getApplicationContext(), DbContract.GOALS.CONTENT_URI,null,goalSelection,goalSelectionArgs,null);
+                return new CursorLoader(getApplicationContext(), cursorLoaderGoalsUri,null, cursorLoaderGoalSelection, cursorLoaderGoalSelectionArgs, cursorLoaderGoalsSortOrder);
         }
         return null;
     }
@@ -212,6 +232,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
         });
     }
+
+
 
 
 }

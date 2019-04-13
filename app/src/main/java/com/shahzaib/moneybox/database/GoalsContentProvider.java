@@ -18,6 +18,8 @@ public class GoalsContentProvider extends ContentProvider {
     public final int NOTIFICATION_ID_TABLE_WITH_ID = 201;
     public final int CONTRIBUTIONS_HISTORY_TABLE = 300;
     public final int GOALS_TOTAL = 102;
+    public final int GOALS_SORT_BY_MIN_TARGET_AMOUNT = 103;
+    public final int GOALS_SORT_BY_MAX_TARGET_AMOUNT = 104;
 
 
 
@@ -69,6 +71,17 @@ public class GoalsContentProvider extends ContentProvider {
             case GOALS_TOTAL:
                 cursor = db.rawQuery("SELECT SUM(TargetAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_AMOUNT+", SUM(DepositedAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_DEPOSITED+" FROM GOALS WHERE isCompleted='false';",null);
                 return cursor;
+
+            case GOALS_SORT_BY_MIN_TARGET_AMOUNT:
+                cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetAmount ASC;",null);
+                return cursor;
+
+
+            case GOALS_SORT_BY_MAX_TARGET_AMOUNT:
+                cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetAmount DESC;",null);
+                return cursor;
+
+
 
 
             case NOTIFICATION_ID_TABLE:
@@ -223,6 +236,10 @@ public class GoalsContentProvider extends ContentProvider {
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.NOTIFICATION_IDs.TABLE_NAME, NOTIFICATION_ID_TABLE);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.NOTIFICATION_IDs.TABLE_NAME + "/#", NOTIFICATION_ID_TABLE_WITH_ID);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.CONTRIBUTION_HISTORY.TABLE_NAME, CONTRIBUTIONS_HISTORY_TABLE);
+
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT, GOALS_SORT_BY_MIN_TARGET_AMOUNT);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT, GOALS_SORT_BY_MAX_TARGET_AMOUNT);
+
 
         return uriMatcher;
     }

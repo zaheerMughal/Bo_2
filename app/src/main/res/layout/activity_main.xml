@@ -21,6 +21,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/include"
         app:layout_constraintEnd_toEndOf="@+id/include"
         app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/ic_sort"
+        android:layout_width="@dimen/toolbar_button_width_height"
+        android:layout_height="@dimen/toolbar_button_width_height"
+        android:background="@drawable/ripple_effect"
+        android:contentDescription="@string/add_goal"
+        android:src="@drawable/ic_sort"
+        android:scaleType="fitXY"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintEnd_toStartOf="@+id/ic_add_goal"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
