@@ -15,6 +15,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
 import com.shahzaib.moneybox.database.DbContract;
 import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
@@ -125,6 +128,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     protected void onResume() {
         super.onResume();
         adapter.setShowGoalsTotal(SharedPreferencesUtils.getDefault_ShowGoalsTotal(this));
+        sortList(SharedPreferencesUtils.getDefaultSortOrder(this));
+        Toast.makeText(this, "Default Sort order: "+SharedPreferencesUtils.getDefaultSortOrder(this), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -231,6 +236,9 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
     private void showDialogForSorting() {
+
+
+
         final String A_TO_Z = "A-Z";
         final String MIN_DAYS_LEFT = "Min Days Left";
         final String MAX_DAYS_LEFT = "Max Days Left";
@@ -240,16 +248,40 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         final String MAX_AMOUNT_LEFT = "Max Amount Left";
 
 
-        final String[] sortOrderList = { A_TO_Z,
-                MIN_DAYS_LEFT, MAX_DAYS_LEFT,
-                MIN_TARGET_AMOUNT, MAX_TARGET_AMOUNT,
-                MIN_AMOUNT_LEFT, MAX_AMOUNT_LEFT};
+
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Sort By");
 
-        int checkedItem = 0; //this will checked the item when user open the dialog
-        builder.setSingleChoiceItems(sortOrderList, checkedItem, new DialogInterface.OnClickListener() {
+
+        final String[] sortOrderList = {
+                A_TO_Z,
+                MIN_DAYS_LEFT,
+                MAX_DAYS_LEFT,
+                MIN_TARGET_AMOUNT,
+                MAX_TARGET_AMOUNT,
+                MIN_AMOUNT_LEFT,
+                MAX_AMOUNT_LEFT
+        };
+
+        // jb dialog open ho to default sort order jo user ny select kiya hy vo item selected honi chahye
+        // is k liye hum mainually mapping kr rahy hian, that not good, find good approach.
+        HashMap<String,Integer> checkedItemMap = new HashMap<>();
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_A_TO_Z,0);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MIN_DAYS_LEFT,1);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MAX_DAYS_LEFT,2);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT,3);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT,4);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MIN_AMOUNT_LEFT,5);
+        checkedItemMap.put(DbContract.GOALS.SORT_BY_MAX_AMOUNT_LEFT,6);
+        int defaultSortOrderIndex = 0;
+        if(checkedItemMap.get(SharedPreferencesUtils.getDefaultSortOrder(this))!=null){
+            defaultSortOrderIndex = checkedItemMap.get(SharedPreferencesUtils.getDefaultSortOrder(this));
+        }
+
+
+        builder.setSingleChoiceItems(sortOrderList, defaultSortOrderIndex, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int position) {
 
@@ -282,9 +314,9 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
                 }
 
 
-//                Toast.makeText(MainActivity.this, "Position: " + position + " Value: " + sortOrderList[position], Toast.LENGTH_LONG).show();
-
                 dialog.dismiss();
+                Toast.makeText(MainActivity.this, "Goals Sorted", Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -296,8 +328,9 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
     private void sortList(String sortBy){
+        Log.i("1234567", "sortOrder: "+sortBy);
+        SharedPreferencesUtils.setDefaultSortOrder(this,sortBy);
         cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(sortBy).build();
         getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
-        Toast.makeText(this, "Goals Sorted", Toast.LENGTH_SHORT).show();
     }
 }

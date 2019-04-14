@@ -2,20 +2,25 @@ package com.shahzaib.moneybox.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.shahzaib.moneybox.Model.Currency;
+import com.shahzaib.moneybox.database.DbContract;
 
 public class SharedPreferencesUtils {
 
     private static final String CURRENCY_SP = "CurrencySP";
     private static final String GOALS_SP = "GoalsSP";
+    private static final String DEFAULT_SORT_ORDER_SP = "DefaultSortOrderSP";
     private static final String SP_CURRENCY_COUNTRY = "CurrencyCountry";
     private static final String SP_CURRENCY_CODE = "CurrencyCode";
     private static final String SP_CURRENCY_SYMBOL = "CurrencySymbol";
     private static final String SP_SHOW_GOALS_TOTAL = "ShowGoalsTotal";
+    private static final String SP_DEFAULT_SORT_ORDER = "SortOrder";
 
     private static SharedPreferences currencySP;
     private static SharedPreferences goalsTotalSP;
+    private static SharedPreferences defautSortOrderSP;
 
 
     private static SharedPreferences getCurrencySP(Context context) {
@@ -30,6 +35,12 @@ public class SharedPreferencesUtils {
             goalsTotalSP = context.getSharedPreferences(GOALS_SP, Context.MODE_PRIVATE);
         }
         return goalsTotalSP;
+    }
+    private static SharedPreferences getDefautSortOrderSP(Context context) {
+        if (defautSortOrderSP == null) {
+            defautSortOrderSP = context.getSharedPreferences(DEFAULT_SORT_ORDER_SP, Context.MODE_PRIVATE);
+        }
+        return defautSortOrderSP;
     }
 
 
@@ -61,4 +72,17 @@ public class SharedPreferencesUtils {
     {
         getGoalsTotalSP(context).edit().putBoolean(SP_SHOW_GOALS_TOTAL,showGoalsTotal).apply();
     }
+
+    public static String getDefaultSortOrder(Context context) {
+        return getDefautSortOrderSP(context).getString(SP_DEFAULT_SORT_ORDER, DbContract.GOALS.SORT_BY_A_TO_Z);
+    }
+
+    public static void setDefaultSortOrder(Context context, String defaultSortOrder)
+    {
+        getDefautSortOrderSP(context).edit().putString(SP_DEFAULT_SORT_ORDER,defaultSortOrder).apply();
+    }
+
+
+
+
 }
