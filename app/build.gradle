@@ -6,8 +6,8 @@ android {
         applicationId "com.shahzaib.moneybox"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 12
-        versionName "8.4"
+        versionCode 13
+        versionName "9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

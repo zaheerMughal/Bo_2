@@ -15,12 +15,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 //import com.facebook.ads.*;
 
 import com.shahzaib.moneybox.Adapters.GoalsAdapter;
@@ -49,9 +49,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     // facebook ad
 //    private AdView adView;
 
-    String cursorLoaderGoalSelection = "isCompleted!=?";
-    String[] cursorLoaderGoalSelectionArgs = new String[]{"true"};
-    String cursorLoaderGoalsSortOrder = "";
+
     private Uri cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI;
 
 
@@ -80,7 +78,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,Add_Goal.class);
-                startActivityForResult(intent,REQUEST_CODE_NEW_ITEM_ADDED);
+                startActivity(intent);
+//                startActivityForResult(intent,REQUEST_CODE_NEW_ITEM_ADDED);
             }
         });
         ic_completed_goals.setOnClickListener(new View.OnClickListener() {
@@ -129,7 +128,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         super.onResume();
         adapter.setShowGoalsTotal(SharedPreferencesUtils.getDefault_ShowGoalsTotal(this));
         sortList(SharedPreferencesUtils.getDefaultSortOrder(this));
-        Toast.makeText(this, "Default Sort order: "+SharedPreferencesUtils.getDefaultSortOrder(this), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -147,26 +145,27 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         {
             case R.id.ic_add_goal:
                 Intent intent = new Intent(this,Add_Goal.class);
-                startActivityForResult(intent,REQUEST_CODE_NEW_ITEM_ADDED);
+                startActivity(intent);
+//                startActivityForResult(intent,REQUEST_CODE_NEW_ITEM_ADDED);
                 break;
         }
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode)
-        {
-            case REQUEST_CODE_NEW_ITEM_ADDED:
-                if(data == null) return;
-                if(data.getBooleanExtra(INTENT_KEY_IS_ITEM_ADDED,false))
-                {
-//                    scrollToPosition(totalNumberOfGoals);
-                }
-                break;
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode)
+//        {
+//            case REQUEST_CODE_NEW_ITEM_ADDED:
+//                if(data == null) return;
+//                if(data.getBooleanExtra(INTENT_KEY_IS_ITEM_ADDED,false))
+//                {
+////                    scrollToPosition(totalNumberOfGoals);
+//                }
+//                break;
+//        }
+//    }
 
 
 
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         switch (id)
         {
             case GOALS_LIST_LOADER:
-                return new CursorLoader(getApplicationContext(), cursorLoaderGoalsUri,null, cursorLoaderGoalSelection, cursorLoaderGoalSelectionArgs, cursorLoaderGoalsSortOrder);
+                return new CursorLoader(getApplicationContext(), cursorLoaderGoalsUri,null, "isCompleted!=?", new String[]{"true"}, null);
         }
         return null;
     }
@@ -224,15 +223,15 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
     //************************** Helper Methods
-    private void scrollToPosition(final int position) {
-        goalRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                goalRecyclerView.smoothScrollToPosition(position);
-            }
-
-        });
-    }
+//    private void scrollToPosition(final int position) {
+//        goalRecyclerView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                goalRecyclerView.smoothScrollToPosition(position);
+//            }
+//
+//        });
+//    }
 
 
     private void showDialogForSorting() {
@@ -285,10 +284,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             @Override
             public void onClick(DialogInterface dialog, int position) {
 
-
-                // sort by min target Amount
-                //  cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath().build();
-
                 switch (sortOrderList[position]){
                     case A_TO_Z:
                         sortList(DbContract.GOALS.SORT_BY_A_TO_Z);
@@ -315,9 +310,6 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
                 dialog.dismiss();
-                Toast.makeText(MainActivity.this, "Goals Sorted", Toast.LENGTH_SHORT).show();
-
-
             }
         });
 
@@ -328,7 +320,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
     private void sortList(String sortBy){
-        Log.i("1234567", "sortOrder: "+sortBy);
+        // uri matcer content provider main create kiya hova hy, just uri pass krni hy aur us k according sort data
+        // ka cursor mil jaey ga. for more detail, see content provider query() implementation
         SharedPreferencesUtils.setDefaultSortOrder(this,sortBy);
         cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(sortBy).build();
         getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);

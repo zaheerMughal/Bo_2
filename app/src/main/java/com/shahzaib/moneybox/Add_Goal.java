@@ -2,7 +2,7 @@ package com.shahzaib.moneybox;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+//import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -45,7 +45,7 @@ import com.shahzaib.moneybox.database.DbContract;
 import com.shahzaib.moneybox.Dialogs.CalendarDialog;
 import com.shahzaib.moneybox.Dialogs.ClockDialog;
 import com.shahzaib.moneybox.Dialogs.Dialog;
-import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
+//import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -279,9 +279,9 @@ public class Add_Goal extends AppCompatActivity
                         finish();
                     } else {
                         saveDataIntoDatabase(goalTitle, targetAmount, goalPictureName, savingFrequency, targetDate,goal.getGoalCurrency(), reminder, alarmID);
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra(MainActivity.INTENT_KEY_IS_ITEM_ADDED, true);
-                        setResult(Activity.RESULT_OK, returnIntent);
+//                        Intent returnIntent = new Intent();
+//                        returnIntent.putExtra(MainActivity.INTENT_KEY_IS_ITEM_ADDED, true);
+//                        setResult(Activity.RESULT_OK, returnIntent);
                         Toast.makeText(this, "New Goal Added", Toast.LENGTH_SHORT).show();
                         finish();
                     }
