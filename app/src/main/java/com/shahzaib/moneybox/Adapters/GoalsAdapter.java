@@ -47,7 +47,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     private String itemID;
     private boolean showGoalsTotal = false;
     private int totalItemCount = 0;
-
+    private ItemEventListener itemEventListener;
 
 
     public GoalsAdapter(Context context) {
@@ -226,6 +226,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     //****************** Helper methods
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
+        notifyDataSetChanged();
     }
 
     private void showPopupMenu(final View view, final int position, final String itemID) {
@@ -256,6 +257,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
                                         cancelNotification(itemID); // if notification is active then cancel the notification
                                         int itemDeleted = context.getContentResolver().delete(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null);
                                         Toast.makeText(context, "Goal Deleted", Toast.LENGTH_SHORT).show();
+                                        itemEventListener.onGoalItemDelete();
+
                                     }
                                 })
                                 .setNegativeButton("Cancel", null)
@@ -344,7 +347,9 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
 
 
-
+    public void setItemEventListener(ItemEventListener itemEventListener){
+        this.itemEventListener = itemEventListener;
+    }
 
 
 
@@ -381,5 +386,9 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
 
         }
+    }
+
+    public interface ItemEventListener{
+        public void onGoalItemDelete();
     }
 }

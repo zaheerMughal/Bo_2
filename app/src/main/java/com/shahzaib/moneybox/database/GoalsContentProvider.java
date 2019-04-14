@@ -75,35 +75,48 @@ public class GoalsContentProvider extends ContentProvider {
 
             case GOALS_TOTAL:
                 cursor = db.rawQuery("SELECT SUM(TargetAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_AMOUNT+", SUM(DepositedAmount) AS "+DbContract.GOALS_TOTAL_TABLE.COLUMN_TOTAL_TARGET_DEPOSITED+" FROM GOALS WHERE isCompleted='false';",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
 
             case GOALS_SORT_BY_MIN_TARGET_AMOUNT:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetAmount ASC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
 
 
             case GOALS_SORT_BY_MAX_TARGET_AMOUNT:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetAmount DESC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
 
             case GOALS_SORT_BY_A_TO_Z:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY Title ASC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
                 return cursor;
 
             case GOALS_SORT_BY_MIN_DAYS_LEFT:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetDate ASC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
                 return cursor;
 
             case GOALS_SORT_BY_MAX_DAYS_LEFT:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetDate DESC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
                 return cursor;
 
             case GOALS_SORT_BY_MIN_AMOUNT_LEFT:
                 cursor = db.rawQuery("SELECT *,ifnull((TargetAmount - DepositedAmount),TargetAmount) as 'Remaining' FROM GOALS  WHERE isCompleted == 'false' ORDER BY Remaining ASC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
                 return cursor;
 
             case GOALS_SORT_BY_MAX_AMOUNT_LEFT:
                 cursor = db.rawQuery("SELECT *,ifnull((TargetAmount - DepositedAmount),TargetAmount) as 'Remaining' FROM GOALS  WHERE isCompleted == 'false' ORDER BY Remaining DESC;",null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
                 return cursor;
 
 

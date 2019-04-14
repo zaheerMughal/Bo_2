@@ -29,7 +29,8 @@ import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
 
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class MainActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener
+, GoalsAdapter.ItemEventListener {
 
     public static final int GOALS_LIST_LOADER = 1;
     public static final int REQUEST_CODE_NEW_ITEM_ADDED = 2;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         goalRecyclerView = findViewById(R.id.goalsRecyclerView);
         goalRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GoalsAdapter(this);
-
+        adapter.setItemEventListener(this);
         getLoaderManager().initLoader(GOALS_LIST_LOADER,null,this);
 
 
@@ -205,6 +206,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         }
         adapter.setCursor(cursor);
         goalRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         totalNumberOfGoals = cursor.getCount();
 
     }
@@ -324,6 +326,17 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
         // ka cursor mil jaey ga. for more detail, see content provider query() implementation
         SharedPreferencesUtils.setDefaultSortOrder(this,sortBy);
         cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(sortBy).build();
+        getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
+    }
+
+
+
+
+
+    @Override
+    public void onGoalItemDelete() {
+            // notifyDataSetChange is not working in adapter,
+        // that's why we are listening deletion here and we will refresh the adapter of recyclerview
         getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
     }
 }
