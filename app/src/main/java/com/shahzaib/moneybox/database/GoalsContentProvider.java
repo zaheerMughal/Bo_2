@@ -20,6 +20,11 @@ public class GoalsContentProvider extends ContentProvider {
     public final int GOALS_TOTAL = 102;
     public final int GOALS_SORT_BY_MIN_TARGET_AMOUNT = 103;
     public final int GOALS_SORT_BY_MAX_TARGET_AMOUNT = 104;
+    public final int GOALS_SORT_BY_MIN_DAYS_LEFT = 105;
+    public final int GOALS_SORT_BY_MAX_DAYS_LEFT = 106;
+    public final int GOALS_SORT_BY_MIN_AMOUNT_LEFT = 107;
+    public final int GOALS_SORT_BY_MAX_AMOUNT_LEFT = 108;
+    public final int GOALS_SORT_BY_A_TO_Z = 109;
 
 
 
@@ -79,6 +84,26 @@ public class GoalsContentProvider extends ContentProvider {
 
             case GOALS_SORT_BY_MAX_TARGET_AMOUNT:
                 cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetAmount DESC;",null);
+                return cursor;
+
+            case GOALS_SORT_BY_A_TO_Z:
+                cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY Title ASC;",null);
+                return cursor;
+
+            case GOALS_SORT_BY_MIN_DAYS_LEFT:
+                cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetDate ASC;",null);
+                return cursor;
+
+            case GOALS_SORT_BY_MAX_DAYS_LEFT:
+                cursor = db.rawQuery("SELECT * FROM GOALS WHERE isCompleted == 'false'  ORDER BY TargetDate DESC;",null);
+                return cursor;
+
+            case GOALS_SORT_BY_MIN_AMOUNT_LEFT:
+                cursor = db.rawQuery("SELECT *,ifnull((TargetAmount - DepositedAmount),TargetAmount) as 'Remaining' FROM GOALS  WHERE isCompleted == 'false' ORDER BY Remaining ASC;",null);
+                return cursor;
+
+            case GOALS_SORT_BY_MAX_AMOUNT_LEFT:
+                cursor = db.rawQuery("SELECT *,ifnull((TargetAmount - DepositedAmount),TargetAmount) as 'Remaining' FROM GOALS  WHERE isCompleted == 'false' ORDER BY Remaining DESC;",null);
                 return cursor;
 
 
@@ -237,8 +262,14 @@ public class GoalsContentProvider extends ContentProvider {
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.NOTIFICATION_IDs.TABLE_NAME + "/#", NOTIFICATION_ID_TABLE_WITH_ID);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.CONTRIBUTION_HISTORY.TABLE_NAME, CONTRIBUTIONS_HISTORY_TABLE);
 
+        // sorting matchers
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT, GOALS_SORT_BY_MIN_TARGET_AMOUNT);
         uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT, GOALS_SORT_BY_MAX_TARGET_AMOUNT);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_A_TO_Z, GOALS_SORT_BY_A_TO_Z);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MIN_DAYS_LEFT, GOALS_SORT_BY_MIN_DAYS_LEFT);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MAX_DAYS_LEFT, GOALS_SORT_BY_MAX_DAYS_LEFT);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MIN_AMOUNT_LEFT, GOALS_SORT_BY_MIN_AMOUNT_LEFT);
+        uriMatcher.addURI(DbContract.AUTHORITY, DbContract.GOALS.TABLE_NAME + "/"+DbContract.GOALS.SORT_BY_MAX_AMOUNT_LEFT, GOALS_SORT_BY_MAX_AMOUNT_LEFT);
 
 
         return uriMatcher;

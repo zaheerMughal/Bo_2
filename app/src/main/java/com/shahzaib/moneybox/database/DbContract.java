@@ -38,8 +38,14 @@ public class DbContract {
         public static final String COLUMN_CURRENCY_SYMBOL = "CurrencySymbol";
 
 
+
         public static final String SORT_BY_MIN_TARGET_AMOUNT = "MinTargetAmount";
         public static final String SORT_BY_MAX_TARGET_AMOUNT = "MaxTargetAmount";
+        public static final String SORT_BY_A_TO_Z = "A_to_Z";
+        public static final String SORT_BY_MIN_DAYS_LEFT = "MinDaysLeft";
+        public static final String SORT_BY_MAX_DAYS_LEFT = "MaxDaysLeft";
+        public static final String SORT_BY_MIN_AMOUNT_LEFT = "MinAmountLeft";
+        public static final String SORT_BY_MAX_AMOUNT_LEFT = "MaxAmountLeft";
 
 
         public static final String GOALS_TOTAL = "GoalsTotal";

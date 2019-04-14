@@ -1,6 +1,8 @@
 package com.shahzaib.moneybox;
 
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -95,15 +97,7 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
             @Override
             public void onClick(View v) {
 
-                // sort by min target Amount
-//                cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT).build();
-
-                // sort by max target Amount
-                cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT).build();
-
-
-                getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
-                Toast.makeText(MainActivity.this, "Show popup for sort", Toast.LENGTH_SHORT).show();
+                showDialogForSorting();
             }
         });
         
@@ -124,6 +118,8 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
 
 
     }
+
+
 
     @Override
     protected void onResume() {
@@ -234,6 +230,74 @@ public class MainActivity extends AppCompatActivity  implements LoaderManager.Lo
     }
 
 
+    private void showDialogForSorting() {
+        final String A_TO_Z = "A-Z";
+        final String MIN_DAYS_LEFT = "Min Days Left";
+        final String MAX_DAYS_LEFT = "Max Days Left";
+        final String MIN_TARGET_AMOUNT = "Min Target Amount";
+        final String MAX_TARGET_AMOUNT = "Max Target Amount";
+        final String MIN_AMOUNT_LEFT = "Min Amount Left";
+        final String MAX_AMOUNT_LEFT = "Max Amount Left";
 
 
+        final String[] sortOrderList = { A_TO_Z,
+                MIN_DAYS_LEFT, MAX_DAYS_LEFT,
+                MIN_TARGET_AMOUNT, MAX_TARGET_AMOUNT,
+                MIN_AMOUNT_LEFT, MAX_AMOUNT_LEFT};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Sort By");
+
+        int checkedItem = 0; //this will checked the item when user open the dialog
+        builder.setSingleChoiceItems(sortOrderList, checkedItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+
+
+                // sort by min target Amount
+                //  cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath().build();
+
+                switch (sortOrderList[position]){
+                    case A_TO_Z:
+                        sortList(DbContract.GOALS.SORT_BY_A_TO_Z);
+                        break;
+                    case MIN_DAYS_LEFT:
+                        sortList(DbContract.GOALS.SORT_BY_MIN_DAYS_LEFT);
+                        break;
+                    case MAX_DAYS_LEFT:
+                        sortList(DbContract.GOALS.SORT_BY_MAX_DAYS_LEFT);
+                        break;
+                    case MIN_TARGET_AMOUNT:
+                        sortList(DbContract.GOALS.SORT_BY_MIN_TARGET_AMOUNT);
+                        break;
+                    case MAX_TARGET_AMOUNT:
+                        sortList(DbContract.GOALS.SORT_BY_MAX_TARGET_AMOUNT);
+                        break;
+                    case MIN_AMOUNT_LEFT:
+                        sortList(DbContract.GOALS.SORT_BY_MIN_AMOUNT_LEFT);
+                        break;
+                    case MAX_AMOUNT_LEFT:
+                        sortList(DbContract.GOALS.SORT_BY_MAX_AMOUNT_LEFT);
+                        break;
+                }
+
+
+//                Toast.makeText(MainActivity.this, "Position: " + position + " Value: " + sortOrderList[position], Toast.LENGTH_LONG).show();
+
+                dialog.dismiss();
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
+    private void sortList(String sortBy){
+        cursorLoaderGoalsUri = DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(sortBy).build();
+        getLoaderManager().restartLoader(GOALS_LIST_LOADER,null,MainActivity.this);
+        Toast.makeText(this, "Goals Sorted", Toast.LENGTH_SHORT).show();
+    }
 }
