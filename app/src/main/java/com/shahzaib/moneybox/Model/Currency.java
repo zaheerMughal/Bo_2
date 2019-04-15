@@ -2,7 +2,6 @@ package com.shahzaib.moneybox.Model;
 
 
 import android.content.Context;
-
 import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
 
 public class Currency {
@@ -10,7 +9,7 @@ public class Currency {
     private  String country ="";
     private  String code = "";
     private  String symbol ="";
-    private Context context;
+    private  Context context;
 
 
     public Currency(Context context){

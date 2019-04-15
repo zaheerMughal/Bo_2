@@ -1,10 +1,18 @@
 package com.shahzaib.moneybox.Model;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.shahzaib.moneybox.database.DbContract;
 import com.shahzaib.moneybox.utils.SharedPreferencesUtils;
 
 import java.io.File;
@@ -15,12 +23,23 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 
+import alarm_utils.AlarmService;
+
+import static android.content.Context.ALARM_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+
 public class Goal {
 
-    public static final String LOG_TAG ="123456";
+    public static final String TAG ="GoalClass";
+    public static final String SP_ALARM = "alarmSharedPreference";
+    public static final String SP_KEY_ALARM_ID = "alarmID";
+
+
+
+
     private Bitmap picture;
-    String goalPictureUniqueName;
-    private String title;
+    private String goalPictureUniqueName = null;
+    private String title = null;
     private long targetDateInMillis = 0;
     private SavingFrequency savingFrequency = SavingFrequency.NOT_PLANNED; // by default not planned
     private long reminder = 0;
@@ -28,6 +47,15 @@ public class Goal {
     private double depositedAmount = 0;
     private Context context; // to retrieve image from the database
     private Currency goalCurrency;
+
+
+
+    private long id = -1;
+    private GoalCurrency currency = null;
+    private String error = null;
+    private int alarmId = -1;
+
+
 
 
     public Goal(Context context) {
@@ -40,18 +68,115 @@ public class Goal {
 
 
 
+    // database related
+    public boolean save(){
+        if(isDataValid()){
+            Log.i(TAG, "save: all data is valid");
+
+            if(getId() == -1){ // goal is brand new
+                // save krny sy pehly remider ko set krna hy (agr user ny active kiya hy to)
+
+                if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
+                    setTheReminder();
+                }
+
+                return insert();
+            }else{ // goal already exist, so update the goal
+                return update();
+            }
+
+        }
+        return false;
+    }
+
+
+
+
+    private boolean insert(){
+        //Now, all data is valid, reminder is created (if any)
+        // It's time to insert brand new goal into database
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_TITLE, getTitle());
+        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, getTargetAmount());
+        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, getTargetDateInMillis());
+        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, getSavingFrequency().toString());
+        if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
+            values.put(DbContract.GOALS.COLUMN_REMINDER, getReminderInMillis());
+        }
+        values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
+
+        if (getAlarmId() != -1) {
+            values.put(DbContract.GOALS.COLUMN_ALARM_ID, getAlarmId());
+        }
+
+        if (getPictureName() != null) {
+            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, getPictureName());
+        }
+
+        //save goal currency data into database
+        if(getCurrency()!=null) {
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,getCurrency().getCountry());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,getCurrency().getCode());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,getCurrency().getSymbol());
+        }
+
+        context.getContentResolver().insert(DbContract.GOALS.CONTENT_URI, values);
+        Toast.makeText(context, "New Goal Inserted", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    private boolean update(){ // update goal into database
+        Toast.makeText(context, "Update Goal into database", Toast.LENGTH_SHORT).show();
+        return true;
+    }
 
 
 
 
 
+    // ----------- Validation
+    private boolean isDataValid(){
+        // perform validation, i.e title can't be null
+        if(getTitle() == null){
+            setError("Please enter title of the goal");
+            return false;
+        }else if(getTargetAmount() <=0 ){
+            setError("Please enter the goal amount");
+            return false;
+        }
+
+        return true;
+    }
 
 
 
 
     //************************************************************ Getters
-    public Currency getGoalCurrency()
-    {
+
+
+    public GoalCurrency getCurrency() {
+        return currency;
+    }
+
+    public int getAlarmId() {
+        return alarmId;
+    }
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
+    }
+
+    public long getId(){
+        return this.id;
+    }
+    public String getError(){
+        return this.error;
+    }
+    private void setError(String error){
+        this.error = error;
+    }
+    public Currency getGoalCurrency() {
         if(goalCurrency!=null){
             return goalCurrency;
         }else
@@ -59,7 +184,6 @@ public class Goal {
             return SharedPreferencesUtils.getDefaultCurrency(context);
         }
     }
-
     public Bitmap getPicture() {
         return picture;
 //        if(picture == null)
@@ -71,22 +195,20 @@ public class Goal {
 //            return picture;
 //        }
     }
-
     public String getPictureName()
     {
         return goalPictureUniqueName;
     }
-
     public File getPictureFileAddress() {
         if(goalPictureUniqueName==null)
         {
-            Log.i(LOG_TAG,"goalPictureUniqueName == NULL");
+            Log.i(TAG,"goalPictureUniqueName == NULL");
             return null;
         }
 
         File folder = context.getFilesDir();
         File file  = new File(folder.getAbsolutePath(),goalPictureUniqueName);
-        Log.i(LOG_TAG,goalPictureUniqueName+" File address received.....");
+        Log.i(TAG,goalPictureUniqueName+" File address received.....");
         return file.getAbsoluteFile();
     }
     public String getTitle() {
@@ -200,7 +322,6 @@ public class Goal {
     public String getTargetAmountInString() {
        return appendCurrencySymbol(Goal.separateNumberWithComma(getTargetAmount()));
     }
-
     public double getDepositedAmount() {
         return depositedAmount;
     }
@@ -311,18 +432,20 @@ public class Goal {
 
 
     //******************************************************* Setters
+    public void setId(long id){
+        this.id = id;
+    }
+    public void setCurrency(GoalCurrency currency){
+        this.currency = currency;
+    }
     public void setGoalCurrency(Currency goalCurrency)
     {
         this.goalCurrency = goalCurrency;
     }
-
-    public void setPictureName(String imageName)
-    {
-        if(imageName==null) return;
+    public void setPictureName(String imageName) {
         goalPictureUniqueName = imageName;
     }
-    public  void setPicture(String imageName)
-    {
+    public  void setPicture(String imageName) {
         if(imageName==null) return;
         goalPictureUniqueName = imageName;
         File folder = context.getFilesDir();
@@ -406,8 +529,7 @@ public class Goal {
 
 
     //***************************************************** Helper functions
-    public String appendCurrencySymbol(String amount)
-    {
+    public String appendCurrencySymbol(String amount) {
         if(getGoalCurrency().getSymbol().length() ==1)
         {
             return getGoalCurrency().getSymbol()+" "+amount; //example: $ 124
@@ -416,7 +538,6 @@ public class Goal {
             return amount+" "+getGoalCurrency().getSymbol(); //example: 1234 USD
         }
     }
-
     public static String formatDate(long timeInMillis) {
         if(timeInMillis == 0) return "";
         Calendar calendar = Calendar.getInstance();
@@ -641,13 +762,11 @@ public class Goal {
         //example: agr result 1 hy to matlb next month matloba month hy
         return remainingDays()/30;
     }
-    public static String separateNumberWithComma(long number)
-    {
+    public static String separateNumberWithComma(long number){
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(number);
     }
-    public static String separateNumberWithComma(double number)
-    {
+    public static String separateNumberWithComma(double number){
         DecimalFormat formatter = new DecimalFormat("#,###.00");
 
         if(number==0) return "0";
@@ -671,6 +790,89 @@ public class Goal {
 
     public enum SavingFrequency {
         DAILY, WEEKLY, MONTHLY, NOT_PLANNED;
+    }
+
+
+
+
+    /* ************************     Helper Functions      *******************
+     **********************************************************************************/
+    private void setTheReminder() {
+        /*
+         * * Note: as of API 19, all repeating alarms are inexact.  If your
+         * application needs precise delivery times then it must use one-time
+         * exact alarms, rescheduling each time when it finish
+         */
+
+
+        setAlarmId(getUniqueAlarmID());
+        Calendar currentCalendar = Calendar.getInstance();
+        Calendar reminder = Calendar.getInstance();
+        reminder.setTimeInMillis(getReminderInMillis());
+
+        if (!reminder.after(currentCalendar)) {
+            // agr remainder date, current date sy previous(pechy) hy to agr goal save krty hi reminder On ho jaey ga.
+            // goal save krty hi reminder ko on hony sy bachana hy
+            Goal.SavingFrequency savingFrequency = getSavingFrequency();
+            Calendar calendar = Calendar.getInstance();
+
+            switch (savingFrequency) {
+                case DAILY:
+                    // set alarm for upcoming day for selected time
+                    reminder.set(Calendar.DAY_OF_MONTH, reminder.get(Calendar.DAY_OF_MONTH) + 1);
+                    break;
+
+                case WEEKLY:
+                    // set alarm for upcoming day of week for selected time
+                    int SELECTED_DAY = reminder.get(Calendar.DAY_OF_WEEK);
+                    int CURRENT_DAY = calendar.get(Calendar.DAY_OF_WEEK);
+
+                    if (SELECTED_DAY <= CURRENT_DAY) {
+                        reminder.set(Calendar.DAY_OF_MONTH, reminder.get(Calendar.DAY_OF_MONTH) + 7);
+                    }
+
+                    break;
+
+                case MONTHLY:
+                    // set alarm for upcoming Month for selected time
+                    reminder.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+                    break;
+
+            }
+        }
+
+        Intent alarmIntent = new Intent(context, AlarmService.class);
+        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, getAlarmId());
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
+                context,
+                getAlarmId(),
+                alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
+                } else {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
+                }
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
+            }
+
+            Log.i(TAG, "New Reminder(Alarm) is created: " + reminder.getTime());
+
+        } else
+            Log.i(TAG, "Alarm Manager is Null, no reminder is created" + reminder.getTime());
+    }
+    private int getUniqueAlarmID() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_ALARM, MODE_PRIVATE);
+        int alarmID = sharedPreferences.getInt(SP_KEY_ALARM_ID, 0);
+        sharedPreferences.edit().putInt(SP_KEY_ALARM_ID, ++alarmID).apply();
+        return alarmID;
     }
 
 

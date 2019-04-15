@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.shahzaib.moneybox.Model.Currency;
 import com.shahzaib.moneybox.Model.Goal;
+import com.shahzaib.moneybox.Model.GoalCurrency;
 import com.shahzaib.moneybox.ThreadPoolExecutor.ExecutorSupplier;
 import com.shahzaib.moneybox.database.DbContract;
 import com.shahzaib.moneybox.Dialogs.CalendarDialog;
@@ -60,8 +61,6 @@ public class Add_Goal extends AppCompatActivity
         implements View.OnClickListener, DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener {
     public static final String KEY_INTENT_ITEM_ID = "itemID";
-    public static final String SP_KEY_ALARM_ID = "alarmID";
-    public static final String SP_ALARM = "alarmSharedPreference";
     public static final String SP_KEY_IMAGE_ID = "uniqueImageID";
     public static final String SP_UNIQUE_IMAGE_ID = "uniqueImageIDSP";
     public static final String KEY_INSTANCE_STATE_GOAL_TITLE = "goalTitle";
@@ -83,10 +82,16 @@ public class Add_Goal extends AppCompatActivity
     SwitchCompat reminderToggle;
 
 
+
+    GoalCurrency goalCurrency = null;
+
+
+
+
     //******* helper variables
     boolean isGoalHasPicture = false;
     Bitmap goalPicture;
-    String goalPictureName;
+    String goalPictureName = null;
     Calendar reminder;
     Goal.SavingFrequency savingFrequency = Goal.SavingFrequency.NOT_PLANNED;
     private String[] savingFrequencies = new String[]{"Not Planned", "Daily", "Weekly", "Monthly"};
@@ -253,39 +258,28 @@ public class Add_Goal extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ic_done:
-                String goalTitle = getTitleOfGoal();
-                long targetAmount = getTargetAmount();
-                String goalPictureName = getGoalPictureName();
-                Calendar targetDate = getTargetDate();
-
-                boolean isDataMissing = checkIsDataMissing(goalTitle, targetAmount);
-
-                if (!isDataMissing) {
-                    int alarmID = 0;
-                    Calendar reminder = null;
-
-                    boolean isReminderActive = checkIsReminderActive();
-                    if (isReminderActive) {
-                        reminder = getReminderData();
-                        if (isItemForUpdate && isReminderChanged) {
-                            updateTheReminder(alarmid, reminder);
-                        } else {
-                            alarmID = getUniqueAlarmID();
-                            setTheReminder(alarmID, reminder);
-                        }
-                    }
-                    if (isItemForUpdate) {
-                        updateDataIntoDatabase(itemID, goalTitle, targetAmount, goalPictureName, savingFrequency, targetDate,goal.getGoalCurrency(), reminder, alarmid);
-                        finish();
-                    } else {
-                        saveDataIntoDatabase(goalTitle, targetAmount, goalPictureName, savingFrequency, targetDate,goal.getGoalCurrency(), reminder, alarmID);
-//                        Intent returnIntent = new Intent();
-//                        returnIntent.putExtra(MainActivity.INTENT_KEY_IS_ITEM_ADDED, true);
-//                        setResult(Activity.RESULT_OK, returnIntent);
-                        Toast.makeText(this, "New Goal Added", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+                /* get all the enter data & saved into database
+                   if data is invalid, show dialog containing error message
+                   validation and saving into database, should be implement into Goal class (gand ni dalna) */
+                Goal goal = new Goal(this);
+                goal.setTitle(getTitleOfGoal());
+                goal.setTargetAmount(getTargetAmount());
+                goal.setPictureName(getGoalPictureName());
+                goal.setTargetDateInMillis(getTargetDate());
+                goal.setCurrency(goalCurrency);
+                goal.setSavingFrequency(savingFrequency);
+                if(isReminderActive()){
+                    goal.setReminder(getReminderData());
                 }
+
+                if(goal.save()){
+                    Toast.makeText(this, "Goal Saved Successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else {
+                    // show error message to user
+                    Dialog.showAlertDialog(this, goal.getError());
+                }
+
                 break;
 
             case R.id.ic_close:
@@ -315,13 +309,18 @@ public class Add_Goal extends AppCompatActivity
         {
             // get data from intent and do what we want
             if(data !=null) {
-                Currency selectedCurrency = new Currency(this);
-                selectedCurrency.setCountry(data.getStringExtra(KEY_INTENT_CURRENCY_COUNTRY_NAME));
-                selectedCurrency.setCode(data.getStringExtra(KEY_INTENT_CURRENCY_CODE));
-                selectedCurrency.setSymbol(data.getStringExtra(KEY_INTENT_CURRENCY_SYMBOL));
+                goalCurrency = new GoalCurrency();
+                goalCurrency.setCountry(data.getStringExtra(KEY_INTENT_CURRENCY_COUNTRY_NAME));
+                goalCurrency.setCode(data.getStringExtra(KEY_INTENT_CURRENCY_CODE));
+                goalCurrency.setSymbol(data.getStringExtra(KEY_INTENT_CURRENCY_SYMBOL));
 
-                goal.setGoalCurrency(selectedCurrency);
-                SHOW_LOG("Selected Currency: "+selectedCurrency.toString());
+//                Currency selectedCurrency = new Currency(this);
+//                selectedCurrency.setCountry(data.getStringExtra(KEY_INTENT_CURRENCY_COUNTRY_NAME));
+//                selectedCurrency.setCode(data.getStringExtra(KEY_INTENT_CURRENCY_CODE));
+//                selectedCurrency.setSymbol(data.getStringExtra(KEY_INTENT_CURRENCY_SYMBOL));
+
+//                goal.setGoalCurrency(selectedCurrency);
+//                SHOW_LOG("Selected Currency: "+selectedCurrency.toString());
                 // change the default currency, also bind data to view and store in variable that will be saved in db
 //                SharedPreferencesUtils.setDefaultCurrency(this,selectedCurrency);
                 refreshCurrencyData();
@@ -366,6 +365,7 @@ public class Add_Goal extends AppCompatActivity
 
     }
 
+
     //    ********************************************************** Getters
     private String getTitleOfGoal() {
         String goalTitle = goalTitleET.getText().toString();
@@ -398,21 +398,25 @@ public class Add_Goal extends AppCompatActivity
 
     }
 
-    private Calendar getTargetDate() {
-        return targetDate;
+    private long getTargetDate() {
+        return targetDate.getTimeInMillis();
     }
 
     private Goal.SavingFrequency getSavingFrequency() {
         return savingFrequency;
     }
 
-    private Calendar getReminderData() {
-        return reminder;
+    private long getReminderData() {
+        if (reminder!=null){
+            return reminder.getTimeInMillis();
+        }
+        return 0;
     }
 
     public String getGoalPictureName() {
         return goalPictureName;
     }
+
 
 
     //    ********************************************************** Setters
@@ -516,7 +520,6 @@ public class Add_Goal extends AppCompatActivity
 
     }
 
-
     private void SHOW_LOG(String message) {
         Log.i("123456", message);
     }
@@ -544,37 +547,8 @@ public class Add_Goal extends AppCompatActivity
         return savingFrequencySparseArray;
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        targetDate = Calendar.getInstance();
-        targetDate.set(Calendar.YEAR, year);
-        targetDate.set(Calendar.MONTH, month);
-        targetDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        targetDateTV.setText(Goal.formatDate(targetDate.getTimeInMillis()));
-    }
 
-    private boolean checkIsDataMissing(String goalTitle, long targetAmount) {
-        if (goalTitle != null && targetAmount > 0) {
-            return false;
-        } else {
-            if (goalTitle == null && targetAmount <= 0) {
-                SHOW_LOG("Both (Title,Target Amount) are empty ");
-                Dialog.showAlertDialog(this, "Please enter title of the goal");
-            } else {
-                if (goalTitle == null) {
-                    SHOW_LOG("Goal Title is empty");
-                    Dialog.showAlertDialog(this, "Please enter title of the goal");
-
-                } else {
-                    SHOW_LOG("Goal amount is null");
-                    Dialog.showAlertDialog(this, "Please enter the goal amount");
-                }
-            }
-            return true;
-        }
-    }
-
-    private boolean checkIsReminderActive() {
+    private boolean isReminderActive() {
         return savingFrequency != Goal.SavingFrequency.NOT_PLANNED && reminderToggle.isChecked();
     }
 
@@ -652,6 +626,144 @@ public class Add_Goal extends AppCompatActivity
         setTheReminder(alarmid, reminder);
     }
 
+
+
+    private byte[] convertPictureIntoBytes(Bitmap goalPicture) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        goalPicture.compress(Bitmap.CompressFormat.JPEG, 1, stream);
+        byte imageInByte[] = stream.toByteArray();
+        return imageInByte;
+    }
+
+    private String parseSavingFrequencyToString(Goal.SavingFrequency savingFrequency) {
+        if (savingFrequency == null) {
+            this.savingFrequency = Goal.SavingFrequency.NOT_PLANNED;
+            return "Not Planned";
+        }
+
+        if (savingFrequency == Goal.SavingFrequency.NOT_PLANNED) {
+            return "Not Planned";
+        } else if (savingFrequency == Goal.SavingFrequency.DAILY) {
+            return "Daily";
+        } else if (savingFrequency == Goal.SavingFrequency.WEEKLY) {
+            return "Weekly";
+        } else if (savingFrequency == Goal.SavingFrequency.MONTHLY) {
+            return "Monthly";
+        } else {
+            throw new UnsupportedOperationException("Unknown SavingFrequency: " + savingFrequency);
+        }
+    }
+
+    private void updateDataIntoDatabase(String itemID, String goalTitle, long targetAmount, String goalPictureName, Goal.SavingFrequency savingFrequency, Calendar targetDate,Currency goalCurrency, Calendar reminder, int alarmID) {
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_TITLE, goalTitle);
+        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, targetAmount);
+        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, targetDate.getTimeInMillis());
+        if (goalPictureName != null)
+            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, goalPictureName);
+        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, savingFrequency.toString());
+        if (reminder == null) values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
+        else values.put(DbContract.GOALS.COLUMN_REMINDER, reminder.getTimeInMillis());
+        if (alarmID != 0) {
+            values.put(DbContract.GOALS.COLUMN_ALARM_ID, alarmID);
+        }
+        //save goal currency data into database
+        if(goalCurrency!=null) {
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,goalCurrency.getCountry());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,goalCurrency.getCode());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,goalCurrency.getSymbol());
+        }
+
+
+        Cursor cursor = getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                long depositedAmount = cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_DEPOSITED_AMOUNT));
+                cursor.close();
+                if (depositedAmount >= targetAmount) {
+                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "true"); // help to separate completed & unCompleted Goals
+                } else {
+                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
+                }
+            }
+        }
+
+
+        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
+        Toast.makeText(this, "Goal Updated", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void deleteReminder(String itemID, int alarmid) {
+        Intent alarmIntent = new Intent(this, AlarmService.class);
+        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, alarmid);
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
+                this,
+                alarmid,
+                alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
+        values.put(DbContract.GOALS.COLUMN_ALARM_ID, 0);
+        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
+        SHOW_LOG("Reminder Deleted from the database ");
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if(alarmManager!=null) alarmManager.cancel(alarmPendingIntent);
+        SHOW_LOG("Alarm Also Canceled");
+    }
+
+    private void scrollToBottomOfScreen() {
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+
+    private String getUniqueNameForImage() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SP_UNIQUE_IMAGE_ID, MODE_PRIVATE);
+        int uniqueImageID = sharedPreferences.getInt(SP_KEY_IMAGE_ID, 0);
+        sharedPreferences.edit().putInt(SP_KEY_IMAGE_ID, ++uniqueImageID).apply();
+        String uniqueImageName = "image" + uniqueImageID + ".jpg";
+        Log.i("123456", "ImageId: " + uniqueImageID + "\nSaved Image Name: " + uniqueImageName);
+        return uniqueImageName;
+    }
+
+    private void refreshCurrencyData()
+    {
+        if(goalCurrency == null){
+            // initialize default currency
+            goalCurrency = new GoalCurrency("","Initialize default currency","");
+        }
+
+        goalCurrencyTV.setText(goalCurrency.getCode());
+    }
+
+
+
+
+
+
+    /* ************************     Reminder Related Methods      *******************
+     **********************************************************************************/
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        setReminderTime(hourOfDay, minute);
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        targetDate = Calendar.getInstance();
+        targetDate.set(Calendar.YEAR, year);
+        targetDate.set(Calendar.MONTH, month);
+        targetDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        targetDateTV.setText(Goal.formatDate(targetDate.getTimeInMillis()));
+    }
+
     private void showDialogForSelectingSavingFrequency() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Add_Goal.this);
         builder.setTitle("Saving Frequency")
@@ -668,8 +780,6 @@ public class Add_Goal extends AppCompatActivity
         if (savingFrequency == Goal.SavingFrequency.NOT_PLANNED) {
             isReminderTogglePressed_WhenSFNotPlanned = true;
             showDialogForSelectingSavingFrequency();
-//            Dialog.showAlertDialog(this,"Select saving frequency first !");
-//            reminderToggle.setChecked(false);
         } else {
             initializeReminder();
         }
@@ -678,11 +788,6 @@ public class Add_Goal extends AppCompatActivity
     private void showClock() {
         ClockDialog clockDialog = new ClockDialog();
         clockDialog.show(getSupportFragmentManager(), "Set Time For Reminder");
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        setReminderTime(hourOfDay, minute);
     }
 
     private void setReminderTime(int hourOfDay, int minute) {
@@ -790,154 +895,6 @@ public class Add_Goal extends AppCompatActivity
             }
         }
     }
-
-
-    private void saveDataIntoDatabase(String goalTitle, long targetAmount, String goalPictureName, Goal.SavingFrequency savingFrequency, Calendar targetDate,Currency goalCurrency, Calendar reminder, int alarmID) {
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_TITLE, goalTitle);
-        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, targetAmount);
-        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, targetDate.getTimeInMillis());
-
-        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, savingFrequency.toString());
-        if (reminder != null)
-            values.put(DbContract.GOALS.COLUMN_REMINDER, reminder.getTimeInMillis());
-        values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
-
-        if (alarmID != 0) {
-            values.put(DbContract.GOALS.COLUMN_ALARM_ID, alarmID);
-        }
-        // save image, get the unique name for the image and after storing the image into internal storage,
-        // store its URI into database
-        if (goalPictureName != null) {
-            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, goalPictureName);
-        }
-
-        //save goal currency data into database
-        if(goalCurrency!=null) {
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,goalCurrency.getCountry());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,goalCurrency.getCode());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,goalCurrency.getSymbol());
-        }
-        getContentResolver().insert(DbContract.GOALS.CONTENT_URI, values);
-    }
-
-    private byte[] convertPictureIntoBytes(Bitmap goalPicture) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        goalPicture.compress(Bitmap.CompressFormat.JPEG, 1, stream);
-        byte imageInByte[] = stream.toByteArray();
-        return imageInByte;
-    }
-
-    private String parseSavingFrequencyToString(Goal.SavingFrequency savingFrequency) {
-        if (savingFrequency == null) {
-            this.savingFrequency = Goal.SavingFrequency.NOT_PLANNED;
-            return "Not Planned";
-        }
-
-        if (savingFrequency == Goal.SavingFrequency.NOT_PLANNED) {
-            return "Not Planned";
-        } else if (savingFrequency == Goal.SavingFrequency.DAILY) {
-            return "Daily";
-        } else if (savingFrequency == Goal.SavingFrequency.WEEKLY) {
-            return "Weekly";
-        } else if (savingFrequency == Goal.SavingFrequency.MONTHLY) {
-            return "Monthly";
-        } else {
-            throw new UnsupportedOperationException("Unknown SavingFrequency: " + savingFrequency);
-        }
-    }
-
-    private void updateDataIntoDatabase(String itemID, String goalTitle, long targetAmount, String goalPictureName, Goal.SavingFrequency savingFrequency, Calendar targetDate,Currency goalCurrency, Calendar reminder, int alarmID) {
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_TITLE, goalTitle);
-        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, targetAmount);
-        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, targetDate.getTimeInMillis());
-        if (goalPictureName != null)
-            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, goalPictureName);
-        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, savingFrequency.toString());
-        if (reminder == null) values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
-        else values.put(DbContract.GOALS.COLUMN_REMINDER, reminder.getTimeInMillis());
-        if (alarmID != 0) {
-            values.put(DbContract.GOALS.COLUMN_ALARM_ID, alarmID);
-        }
-        //save goal currency data into database
-        if(goalCurrency!=null) {
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,goalCurrency.getCountry());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,goalCurrency.getCode());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,goalCurrency.getSymbol());
-        }
-
-
-        Cursor cursor = getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                long depositedAmount = cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_DEPOSITED_AMOUNT));
-                cursor.close();
-                if (depositedAmount >= targetAmount) {
-                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "true"); // help to separate completed & unCompleted Goals
-                } else {
-                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
-                }
-            }
-        }
-
-
-        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
-        Toast.makeText(this, "Goal Updated", Toast.LENGTH_SHORT).show();
-    }
-
-    private int getUniqueAlarmID() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SP_ALARM, MODE_PRIVATE);
-        int alarmID = sharedPreferences.getInt(SP_KEY_ALARM_ID, 0);
-        SHOW_LOG("Alarm ID: " + alarmID);
-        sharedPreferences.edit().putInt(SP_KEY_ALARM_ID, ++alarmID).apply();
-        return alarmID;
-    }
-
-    private void deleteReminder(String itemID, int alarmid) {
-        Intent alarmIntent = new Intent(this, AlarmService.class);
-        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, alarmid);
-
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
-                this,
-                alarmid,
-                alarmIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
-        values.put(DbContract.GOALS.COLUMN_ALARM_ID, 0);
-        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
-        SHOW_LOG("Reminder Deleted from the database ");
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if(alarmManager!=null) alarmManager.cancel(alarmPendingIntent);
-        SHOW_LOG("Alarm Also Canceled");
-    }
-
-    private void scrollToBottomOfScreen() {
-        scrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(View.FOCUS_DOWN);
-            }
-        });
-    }
-
-    private String getUniqueNameForImage() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SP_UNIQUE_IMAGE_ID, MODE_PRIVATE);
-        int uniqueImageID = sharedPreferences.getInt(SP_KEY_IMAGE_ID, 0);
-        sharedPreferences.edit().putInt(SP_KEY_IMAGE_ID, ++uniqueImageID).apply();
-        String uniqueImageName = "image" + uniqueImageID + ".jpg";
-        Log.i("123456", "ImageId: " + uniqueImageID + "\nSaved Image Name: " + uniqueImageName);
-        return uniqueImageName;
-    }
-
-    private void refreshCurrencyData()
-    {
-        goalCurrencyTV.setText(goal.getGoalCurrency().getCode());
-    }
-
 
 }
 
