@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -45,12 +46,12 @@ public class Goal {
     private long reminder = 0;
     private long targetAmount = 0;
     private double depositedAmount = 0;
-    private Context context; // to retrieve image from the database
+    private Context context = null;
     private Currency goalCurrency;
 
 
 
-    private long id = -1;
+    private String id = null;
     private GoalCurrency currency = null;
     private String error = null;
     private int alarmId = -1;
@@ -68,12 +69,52 @@ public class Goal {
 
 
 
-    // database related
+
+    /* ************************     Database Related Functions      *******************
+     **********************************************************************************/
+    public static Goal find_goal_by_id(Context context, String itemID){
+        Cursor cursor = context.getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(),
+                null, null, null, null);
+
+        if (cursor != null) {
+            Goal goal = new Goal(context);
+
+            // initializing the goal
+            if (cursor.moveToFirst()) {
+                goal.setId(cursor.getString(cursor.getColumnIndex(DbContract.GOALS._ID)));
+                goal.setPicture(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_PICTURE_NAME)));
+                goal.setPictureName(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_PICTURE_NAME)));
+                goal.setTitle(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TITLE)));
+                goal.setTargetAmount(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TARGET_AMOUNT)));
+                goal.setTargetDateInMillis(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TARGET_DATE)));
+                goal.setSavingFrequency(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_SAVING_FREQUENCY)));
+                goal.setReminder(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_REMINDER)));
+                GoalCurrency goalCurrency = new GoalCurrency();
+                goalCurrency.setCountry(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY)));
+                goalCurrency.setCode(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_CODE)));
+                goalCurrency.setSymbol(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL)));
+                goal.setCurrency(goalCurrency);
+                goal.setAlarmId(cursor.getInt(cursor.getColumnIndex(DbContract.GOALS.COLUMN_ALARM_ID)));
+
+            }
+
+
+            cursor.close();
+            return goal;
+        }
+        return null;
+    }
+
+
+
+
+
+
     public boolean save(){
         if(isDataValid()){
             Log.i(TAG, "save: all data is valid");
 
-            if(getId() == -1){ // goal is brand new
+            if(getId() == null){ // goal is brand new
                 // save krny sy pehly remider ko set krna hy (agr user ny active kiya hy to)
 
                 if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
@@ -81,54 +122,17 @@ public class Goal {
                 }
 
                 return insert();
-            }else{ // goal already exist, so update the goal
+            }else{ // goal already exist, so update the goal\\
+
+                // delete the previous reminder (if any) and create new
+                if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
+                    updateTheReminder();
+                }
                 return update();
             }
 
         }
         return false;
-    }
-
-
-
-
-    private boolean insert(){
-        //Now, all data is valid, reminder is created (if any)
-        // It's time to insert brand new goal into database
-
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_TITLE, getTitle());
-        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, getTargetAmount());
-        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, getTargetDateInMillis());
-        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, getSavingFrequency().toString());
-        if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
-            values.put(DbContract.GOALS.COLUMN_REMINDER, getReminderInMillis());
-        }
-        values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
-
-        if (getAlarmId() != -1) {
-            values.put(DbContract.GOALS.COLUMN_ALARM_ID, getAlarmId());
-        }
-
-        if (getPictureName() != null) {
-            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, getPictureName());
-        }
-
-        //save goal currency data into database
-        if(getCurrency()!=null) {
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,getCurrency().getCountry());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,getCurrency().getCode());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,getCurrency().getSymbol());
-        }
-
-        context.getContentResolver().insert(DbContract.GOALS.CONTENT_URI, values);
-        Toast.makeText(context, "New Goal Inserted", Toast.LENGTH_SHORT).show();
-        return true;
-    }
-
-    private boolean update(){ // update goal into database
-        Toast.makeText(context, "Update Goal into database", Toast.LENGTH_SHORT).show();
-        return true;
     }
 
 
@@ -167,7 +171,7 @@ public class Goal {
         this.alarmId = alarmId;
     }
 
-    public long getId(){
+    public String getId(){
         return this.id;
     }
     public String getError(){
@@ -432,7 +436,7 @@ public class Goal {
 
 
     //******************************************************* Setters
-    public void setId(long id){
+    public void setId(String id){
         this.id = id;
     }
     public void setCurrency(GoalCurrency currency){
@@ -797,6 +801,87 @@ public class Goal {
 
     /* ************************     Helper Functions      *******************
      **********************************************************************************/
+
+
+    private boolean insert(){
+        //Now, all data is valid, reminder is created (if any)
+        // It's time to insert brand new goal into database
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_TITLE, getTitle());
+        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, getTargetAmount());
+        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, getTargetDateInMillis());
+        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, getSavingFrequency().toString());
+        if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
+            values.put(DbContract.GOALS.COLUMN_REMINDER, getReminderInMillis());
+        }
+        values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
+
+        if (getAlarmId() != -1) {
+            values.put(DbContract.GOALS.COLUMN_ALARM_ID, getAlarmId());
+        }
+
+        if (getPictureName() != null) {
+            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, getPictureName());
+        }
+
+        //save goal currency data into database
+        if(getCurrency()!=null) {
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,getCurrency().getCountry());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,getCurrency().getCode());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,getCurrency().getSymbol());
+        }
+
+        context.getContentResolver().insert(DbContract.GOALS.CONTENT_URI, values);
+        Toast.makeText(context, "New Goal Inserted", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+    private boolean update(){ // update goal into database
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_TITLE, getTitle());
+        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, getTargetAmount());
+        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, getTargetDateInMillis());
+        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, getSavingFrequency().toString());
+        if(getReminderInMillis() != 0){ // agr reminder set hova hy to , set the reminder
+            values.put(DbContract.GOALS.COLUMN_REMINDER, getReminderInMillis());
+        }
+        values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
+
+        if (getAlarmId() != -1) {
+            values.put(DbContract.GOALS.COLUMN_ALARM_ID, getAlarmId());
+        }
+
+        if (getPictureName() != null) {
+            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, getPictureName());
+        }
+
+        //save goal currency data into database
+        if(getCurrency()!=null) {
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,getCurrency().getCountry());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,getCurrency().getCode());
+            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,getCurrency().getSymbol());
+        }
+
+
+        Cursor cursor = context.getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(this.getId()).build(), null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                long depositedAmount = cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_DEPOSITED_AMOUNT));
+                cursor.close();
+                if (depositedAmount >= targetAmount) {
+                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "true"); // help to separate completed & unCompleted Goals
+                } else {
+                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
+                }
+            }
+        }
+
+
+        context.getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(this.getId()).build(), values, null, null);
+        Toast.makeText(context, "Goal Updated", Toast.LENGTH_SHORT).show();
+        return true;
+    }
     private void setTheReminder() {
         /*
          * * Note: as of API 19, all repeating alarms are inexact.  If your
@@ -874,6 +959,32 @@ public class Goal {
         sharedPreferences.edit().putInt(SP_KEY_ALARM_ID, ++alarmID).apply();
         return alarmID;
     }
+    private void updateTheReminder() {
+        // delete the previous reminder and set a new reminder
+        deleteReminder();
+        setTheReminder();
+    }
+    private void deleteReminder() {
+        Intent alarmIntent = new Intent(context, AlarmService.class);
+        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, getAlarmId());
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
+                context,
+                getAlarmId(),
+                alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
+        values.put(DbContract.GOALS.COLUMN_ALARM_ID, 0);
+        context.getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(getId()).build(), values, null, null);
+        Log.i(TAG,"Reminder Deleted from the database ");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        if(alarmManager!=null) alarmManager.cancel(alarmPendingIntent);
+        Log.i(TAG,"Alarm Also Canceled");
+    }
+
 
 
 }

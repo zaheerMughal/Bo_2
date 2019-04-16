@@ -106,11 +106,10 @@ public class Add_Goal extends AppCompatActivity
     String itemID;
     int alarmid = 0;
     boolean isItemForUpdate = false;
-    Goal goal = new Goal(this);
+    Goal goal;
     ScrollView scrollView;
     boolean isReminderChanged = false;
     boolean isReminderTogglePressed_WhenSFNotPlanned = false; // SF stands for SavingFrequency
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,61 +138,50 @@ public class Add_Goal extends AppCompatActivity
         progressBar = findViewById(R.id.imageLoadingProgressBar);
 
 
-
-        itemID = getIntent().getStringExtra(KEY_INTENT_ITEM_ID);
-        isItemForUpdate = itemID != null;
-
         if (savedInstanceState != null) {
             goalTitleET.setText(savedInstanceState.getString(KEY_INSTANCE_STATE_GOAL_TITLE, ""));
             targetAmountET.setText(String.valueOf(savedInstanceState.getLong(KEY_INSTANCE_STATE_GOAL_AMOUNT, 0)));
         }
 
 
+
+
+
+
+        itemID = getIntent().getStringExtra(KEY_INTENT_ITEM_ID);
+        isItemForUpdate = itemID != null;
+
+
         if (isItemForUpdate) {// Goal already exist
+            goal = Goal.find_goal_by_id(this,itemID);
             toolbar_text.setText("Edit Goal");
-            Cursor cursor = getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(),
-                    null, null, null, null);
 
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    goal.setPicture(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_PICTURE_NAME)));
-                    goal.setTitle(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TITLE)));
-                    goal.setTargetAmount(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TARGET_AMOUNT)));
-                    goal.setTargetDateInMillis(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_TARGET_DATE)));
-                    goal.setSavingFrequency(cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_SAVING_FREQUENCY)));
-                    goal.setReminder(cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_REMINDER)));
-                    goal.setGoalCurrency(new Currency(this,
-                            cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY)),
-                            cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_CODE)),
-                            cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL))
-                    ));
-
-                    refreshCurrencyData();
-                    alarmid = cursor.getInt(cursor.getColumnIndex(DbContract.GOALS.COLUMN_ALARM_ID));
-
-                    //******* bind the UI & also initialize the variables
-                    if (goal.getPicture() != null) {
-                        goalImageIV.setImageBitmap(goal.getPicture());
-                        goalPicture = goal.getPicture();
-                        goalPictureName = cursor.getString(cursor.getColumnIndex(DbContract.GOALS.COLUMN_PICTURE_NAME));
-                        isGoalHasPicture = true;
-                    }
-                    goalTitleET.setText(goal.getTitle());
-                    targetAmountET.setText(String.valueOf(goal.getTargetAmount()));
-                    targetDateTV.setText(goal.getTargetDate());
-                    if (targetDate == null) targetDate = Calendar.getInstance();
-                    targetDate.setTimeInMillis(goal.getTargetDateInMillis());
-                    savingFrequencyTV.setText(parseSavingFrequencyToString(goal.getSavingFrequency()));
-                    savingFrequency = goal.getSavingFrequency();
-                    if (goal.getReminderInMillis() != 0) {
-                        if (reminder == null) reminder = Calendar.getInstance();
-                        reminder.setTimeInMillis(goal.getReminderInMillis());
-                        reminderToggle.setChecked(true);
-                        initializeReminder();
-                    }
-                }
+            // bind the UI
+            goalCurrency = goal.getCurrency();
+            refreshCurrencyData();
+            goalPicture = goal.getPicture();
+            if (goalPicture != null) {
+                goalImageIV.setImageBitmap(goal.getPicture());
+                goalPictureName = goal.getPictureName();
+                isGoalHasPicture = true;
             }
+            goalTitleET.setText(goal.getTitle());
+            targetAmountET.setText(String.valueOf(goal.getTargetAmount()));
+            targetDateTV.setText(goal.getTargetDate());
+            if (targetDate == null) targetDate = Calendar.getInstance();
+            targetDate.setTimeInMillis(goal.getTargetDateInMillis());
+            savingFrequencyTV.setText(parseSavingFrequencyToString(goal.getSavingFrequency()));
+            savingFrequency = goal.getSavingFrequency();
+            if (goal.getReminderInMillis() != 0) {
+                if (reminder == null) reminder = Calendar.getInstance();
+                reminder.setTimeInMillis(goal.getReminderInMillis());
+                reminderToggle.setChecked(true);
+                initializeReminder();
+            }
+
+
         } else { // brand new goal
+            goal = new Goal(this);
             toolbar_text.setText("Add Goal");
             initializeTargetDate();
             refreshCurrencyData();
@@ -261,7 +249,6 @@ public class Add_Goal extends AppCompatActivity
                 /* get all the enter data & saved into database
                    if data is invalid, show dialog containing error message
                    validation and saving into database, should be implement into Goal class (gand ni dalna) */
-                Goal goal = new Goal(this);
                 goal.setTitle(getTitleOfGoal());
                 goal.setTargetAmount(getTargetAmount());
                 goal.setPictureName(getGoalPictureName());
@@ -366,7 +353,12 @@ public class Add_Goal extends AppCompatActivity
     }
 
 
-    //    ********************************************************** Getters
+
+
+
+
+            /* ************************    Getters      *******************
+     **********************************************************************************/
     private String getTitleOfGoal() {
         String goalTitle = goalTitleET.getText().toString();
         if (goalTitle.length() > 0) {
@@ -389,21 +381,8 @@ public class Add_Goal extends AppCompatActivity
         }
     }
 
-    private Bitmap getGoalPicture() {
-        if (!isGoalHasPicture) {
-            return null;
-        } else {
-            return goalPicture;
-        }
-
-    }
-
     private long getTargetDate() {
         return targetDate.getTimeInMillis();
-    }
-
-    private Goal.SavingFrequency getSavingFrequency() {
-        return savingFrequency;
     }
 
     private long getReminderData() {
@@ -419,7 +398,9 @@ public class Add_Goal extends AppCompatActivity
 
 
 
-    //    ********************************************************** Setters
+
+            /* ************************    Setters      *******************
+     **********************************************************************************/
     private void setGoalPicture(Intent imageData) {
         if (imageData == null) {
             isGoalHasPicture = false;
@@ -473,7 +454,6 @@ public class Add_Goal extends AppCompatActivity
         }
     }
 
-
     private void setSavingFrequency(int which) {
 
         if (isReminderTogglePressed_WhenSFNotPlanned && savingFrequencySparseArray.get(which) != Goal.SavingFrequency.NOT_PLANNED) {
@@ -495,253 +475,6 @@ public class Add_Goal extends AppCompatActivity
 
     }
 
-
-    //    ********************************************************** Helper methods
-    private void showImagePicker() {
-        // first check for permission
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-
-            boolean isHavePermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-            if (!isHavePermission) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_READ_EXTERNAL_STORAGE);
-                return;
-            }
-        }
-
-
-        Intent chooseImageIntent = new Intent(Intent.ACTION_PICK);
-        chooseImageIntent.setType("image/*");
-        Intent chooser = Intent.createChooser(chooseImageIntent, "Complete action using");
-        if (chooser.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(chooser, REQUEST_CODE_IMAGE_PIC);
-        } else {
-            Toast.makeText(this, "There is no app to perform this action", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void SHOW_LOG(String message) {
-        Log.i("123456", message);
-    }
-
-    private void initializeTargetDate() {
-        targetDate = Calendar.getInstance();
-        targetDateTV.setText(Goal.formatDate(targetDate.getTimeInMillis()));
-    }
-
-    private void showTargetDatePicker() {
-        CalendarDialog calendarDialog = new CalendarDialog();
-        if (isItemForUpdate && targetDate != null) {
-            calendarDialog.setCalendar(targetDate);
-        }
-        calendarDialog.show(getSupportFragmentManager(), "Target Date Picker");
-    }
-
-    private SparseArray<Goal.SavingFrequency> getSavingFrequencySparseArray() {
-        SparseArray<Goal.SavingFrequency> savingFrequencySparseArray = new SparseArray<>();
-
-        savingFrequencySparseArray.put(0, Goal.SavingFrequency.NOT_PLANNED);
-        savingFrequencySparseArray.put(1, Goal.SavingFrequency.DAILY);
-        savingFrequencySparseArray.put(2, Goal.SavingFrequency.WEEKLY);
-        savingFrequencySparseArray.put(3, Goal.SavingFrequency.MONTHLY);
-        return savingFrequencySparseArray;
-    }
-
-
-    private boolean isReminderActive() {
-        return savingFrequency != Goal.SavingFrequency.NOT_PLANNED && reminderToggle.isChecked();
-    }
-
-    private void setTheReminder(int alarmID, Calendar reminder) {
-        /*
-         * * Note: as of API 19, all repeating alarms are inexact.  If your
-         * application needs precise delivery times then it must use one-time
-         * exact alarms, rescheduling each time when it finish
-         */
-
-
-        Calendar currentCalendar = Calendar.getInstance();
-        if (!reminder.after(currentCalendar)) {// agr remainder date, current date sy previous(pechy) hy to agr goal save krty hi reminder On ho jaey ga.
-            // goal save krty hi reminder ko on hony sy bachana hy
-            Goal.SavingFrequency savingFrequency = getSavingFrequency();
-            Calendar calendar = Calendar.getInstance();
-
-            switch (savingFrequency) {
-                case DAILY:
-                    // set alarm for upcoming day for selected time
-                    reminder.set(Calendar.DAY_OF_MONTH, reminder.get(Calendar.DAY_OF_MONTH) + 1);
-                    break;
-
-                case WEEKLY:
-                    // set alarm for upcoming day of week for selected time
-                    int SELECTED_DAY = reminder.get(Calendar.DAY_OF_WEEK);
-                    int CURRENT_DAY = calendar.get(Calendar.DAY_OF_WEEK);
-
-                    if (SELECTED_DAY <= CURRENT_DAY) {
-                        reminder.set(Calendar.DAY_OF_MONTH, reminder.get(Calendar.DAY_OF_MONTH) + 7);
-                    }
-
-                    break;
-
-                case MONTHLY:
-                    // set alarm for upcoming Month for selected time
-                    reminder.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
-                    break;
-
-            }
-        }
-
-        Intent alarmIntent = new Intent(this, AlarmService.class);
-        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, alarmID);
-
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
-                this,
-                alarmID,
-                alarmIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
-                } else {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
-                }
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getTimeInMillis(), alarmPendingIntent);
-            }
-
-            SHOW_LOG("New Alarm is created: " + reminder.getTime());
-
-        } else
-            SHOW_LOG("Alarm Manager is Null, in Daily Repeating function");
-
-    }
-
-    private void updateTheReminder(int alarmid, Calendar reminder) {
-        // delete the previous reminder and set a new reminder
-        deleteReminder(itemID, alarmid);
-        setTheReminder(alarmid, reminder);
-    }
-
-
-
-    private byte[] convertPictureIntoBytes(Bitmap goalPicture) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        goalPicture.compress(Bitmap.CompressFormat.JPEG, 1, stream);
-        byte imageInByte[] = stream.toByteArray();
-        return imageInByte;
-    }
-
-    private String parseSavingFrequencyToString(Goal.SavingFrequency savingFrequency) {
-        if (savingFrequency == null) {
-            this.savingFrequency = Goal.SavingFrequency.NOT_PLANNED;
-            return "Not Planned";
-        }
-
-        if (savingFrequency == Goal.SavingFrequency.NOT_PLANNED) {
-            return "Not Planned";
-        } else if (savingFrequency == Goal.SavingFrequency.DAILY) {
-            return "Daily";
-        } else if (savingFrequency == Goal.SavingFrequency.WEEKLY) {
-            return "Weekly";
-        } else if (savingFrequency == Goal.SavingFrequency.MONTHLY) {
-            return "Monthly";
-        } else {
-            throw new UnsupportedOperationException("Unknown SavingFrequency: " + savingFrequency);
-        }
-    }
-
-    private void updateDataIntoDatabase(String itemID, String goalTitle, long targetAmount, String goalPictureName, Goal.SavingFrequency savingFrequency, Calendar targetDate,Currency goalCurrency, Calendar reminder, int alarmID) {
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_TITLE, goalTitle);
-        values.put(DbContract.GOALS.COLUMN_TARGET_AMOUNT, targetAmount);
-        values.put(DbContract.GOALS.COLUMN_TARGET_DATE, targetDate.getTimeInMillis());
-        if (goalPictureName != null)
-            values.put(DbContract.GOALS.COLUMN_PICTURE_NAME, goalPictureName);
-        values.put(DbContract.GOALS.COLUMN_SAVING_FREQUENCY, savingFrequency.toString());
-        if (reminder == null) values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
-        else values.put(DbContract.GOALS.COLUMN_REMINDER, reminder.getTimeInMillis());
-        if (alarmID != 0) {
-            values.put(DbContract.GOALS.COLUMN_ALARM_ID, alarmID);
-        }
-        //save goal currency data into database
-        if(goalCurrency!=null) {
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_COUNTERY,goalCurrency.getCountry());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_CODE,goalCurrency.getCode());
-            values.put(DbContract.GOALS.COLUMN_CURRENCY_SYMBOL,goalCurrency.getSymbol());
-        }
-
-
-        Cursor cursor = getContentResolver().query(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                long depositedAmount = cursor.getLong(cursor.getColumnIndex(DbContract.GOALS.COLUMN_DEPOSITED_AMOUNT));
-                cursor.close();
-                if (depositedAmount >= targetAmount) {
-                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "true"); // help to separate completed & unCompleted Goals
-                } else {
-                    values.put(DbContract.GOALS.COLUMN_IS_COMPLETED, "false"); // help to separate completed & unCompleted Goals
-                }
-            }
-        }
-
-
-        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
-        Toast.makeText(this, "Goal Updated", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void deleteReminder(String itemID, int alarmid) {
-        Intent alarmIntent = new Intent(this, AlarmService.class);
-        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, alarmid);
-
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
-                this,
-                alarmid,
-                alarmIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        ContentValues values = new ContentValues();
-        values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
-        values.put(DbContract.GOALS.COLUMN_ALARM_ID, 0);
-        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
-        SHOW_LOG("Reminder Deleted from the database ");
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if(alarmManager!=null) alarmManager.cancel(alarmPendingIntent);
-        SHOW_LOG("Alarm Also Canceled");
-    }
-
-    private void scrollToBottomOfScreen() {
-        scrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(View.FOCUS_DOWN);
-            }
-        });
-    }
-
-    private String getUniqueNameForImage() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SP_UNIQUE_IMAGE_ID, MODE_PRIVATE);
-        int uniqueImageID = sharedPreferences.getInt(SP_KEY_IMAGE_ID, 0);
-        sharedPreferences.edit().putInt(SP_KEY_IMAGE_ID, ++uniqueImageID).apply();
-        String uniqueImageName = "image" + uniqueImageID + ".jpg";
-        Log.i("123456", "ImageId: " + uniqueImageID + "\nSaved Image Name: " + uniqueImageName);
-        return uniqueImageName;
-    }
-
-    private void refreshCurrencyData()
-    {
-        if(goalCurrency == null){
-            // initialize default currency
-            goalCurrency = new GoalCurrency("","Initialize default currency","");
-        }
-
-        goalCurrencyTV.setText(goalCurrency.getCode());
-    }
 
 
 
@@ -896,6 +629,133 @@ public class Add_Goal extends AppCompatActivity
         }
     }
 
+
+
+
+
+
+    /* ************************     Helper Methods      *******************
+     **********************************************************************************/
+    private void showImagePicker() {
+        // first check for permission
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+
+            boolean isHavePermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+            if (!isHavePermission) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_READ_EXTERNAL_STORAGE);
+                return;
+            }
+        }
+
+
+        Intent chooseImageIntent = new Intent(Intent.ACTION_PICK);
+        chooseImageIntent.setType("image/*");
+        Intent chooser = Intent.createChooser(chooseImageIntent, "Complete action using");
+        if (chooser.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(chooser, REQUEST_CODE_IMAGE_PIC);
+        } else {
+            Toast.makeText(this, "There is no app to perform this action", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void SHOW_LOG(String message) {
+        Log.i("123456", message);
+    }
+
+    private void initializeTargetDate() {
+        targetDate = Calendar.getInstance();
+        targetDateTV.setText(Goal.formatDate(targetDate.getTimeInMillis()));
+    }
+
+    private void showTargetDatePicker() {
+        CalendarDialog calendarDialog = new CalendarDialog();
+        if (isItemForUpdate && targetDate != null) {
+            calendarDialog.setCalendar(targetDate);
+        }
+        calendarDialog.show(getSupportFragmentManager(), "Target Date Picker");
+    }
+
+    private SparseArray<Goal.SavingFrequency> getSavingFrequencySparseArray() {
+        SparseArray<Goal.SavingFrequency> savingFrequencySparseArray = new SparseArray<>();
+
+        savingFrequencySparseArray.put(0, Goal.SavingFrequency.NOT_PLANNED);
+        savingFrequencySparseArray.put(1, Goal.SavingFrequency.DAILY);
+        savingFrequencySparseArray.put(2, Goal.SavingFrequency.WEEKLY);
+        savingFrequencySparseArray.put(3, Goal.SavingFrequency.MONTHLY);
+        return savingFrequencySparseArray;
+    }
+
+    private boolean isReminderActive() {
+        return savingFrequency != Goal.SavingFrequency.NOT_PLANNED && reminderToggle.isChecked();
+    }
+
+    private String parseSavingFrequencyToString(Goal.SavingFrequency savingFrequency) {
+        if (savingFrequency == null) {
+            this.savingFrequency = Goal.SavingFrequency.NOT_PLANNED;
+            return "Not Planned";
+        }
+
+        if (savingFrequency == Goal.SavingFrequency.NOT_PLANNED) {
+            return "Not Planned";
+        } else if (savingFrequency == Goal.SavingFrequency.DAILY) {
+            return "Daily";
+        } else if (savingFrequency == Goal.SavingFrequency.WEEKLY) {
+            return "Weekly";
+        } else if (savingFrequency == Goal.SavingFrequency.MONTHLY) {
+            return "Monthly";
+        } else {
+            throw new UnsupportedOperationException("Unknown SavingFrequency: " + savingFrequency);
+        }
+    }
+
+    private void deleteReminder(String itemID, int alarmid) {
+        Intent alarmIntent = new Intent(this, AlarmService.class);
+        alarmIntent.putExtra(AlarmService.KEY_ALARM_ID, alarmid);
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
+                this,
+                alarmid,
+                alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.GOALS.COLUMN_REMINDER, 0);
+        values.put(DbContract.GOALS.COLUMN_ALARM_ID, 0);
+        getContentResolver().update(DbContract.GOALS.CONTENT_URI.buildUpon().appendPath(itemID).build(), values, null, null);
+        SHOW_LOG("Reminder Deleted from the database ");
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if(alarmManager!=null) alarmManager.cancel(alarmPendingIntent);
+        SHOW_LOG("Alarm Also Canceled");
+    }
+
+    private void scrollToBottomOfScreen() {
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+
+    private String getUniqueNameForImage() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SP_UNIQUE_IMAGE_ID, MODE_PRIVATE);
+        int uniqueImageID = sharedPreferences.getInt(SP_KEY_IMAGE_ID, 0);
+        sharedPreferences.edit().putInt(SP_KEY_IMAGE_ID, ++uniqueImageID).apply();
+        String uniqueImageName = "image" + uniqueImageID + ".jpg";
+        Log.i("123456", "ImageId: " + uniqueImageID + "\nSaved Image Name: " + uniqueImageName);
+        return uniqueImageName;
+    }
+
+    private void refreshCurrencyData() {
+        if(goalCurrency == null){
+            // initialize default currency
+            goalCurrency = new GoalCurrency("","Initialize default currency","");
+        }
+
+        goalCurrencyTV.setText(goalCurrency.getCode());
+    }
 }
 
 
